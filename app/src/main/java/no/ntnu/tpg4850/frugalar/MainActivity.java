@@ -35,7 +35,7 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 /**
- * A Cardboard sample application.
+ * Cardboard application. Will display a camera preview for each eye.
  */
 public class MainActivity extends CardboardActivity implements CardboardView.StereoRenderer, OnFrameAvailableListener {
 
@@ -78,19 +78,6 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
             1.0f, -1.0f,   // 1. right - mid
             -1.0f, 1.0f,   // 2. left - top
             1.0f, 1.0f,   // 3. right - top
-//
-//    	 -1.0f, -1.0f, //4. left - bottom
-//    	 1.0f , -1.0f, //5. right - bottom
-
-
-//       -1.0f, -1.0f,  // 0. left-bottom
-//        0.0f, -1.0f,   // 1. mid-bottom
-//       -1.0f,  1.0f,   // 2. left-top
-//        0.0f,  1.0f,   // 3. mid-top
-
-            //1.0f, -1.0f,  // 4. right-bottom
-            //1.0f, 1.0f,   // 5. right-top
-
     };
 
 
@@ -106,34 +93,16 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
             1.0f, 1.0f,  // B. right-bottom
             0.0f, 0.0f,  // C. left-top
             1.0f, 0.0f   // D. right-top
-
-//        1.0f,  1.0f,
-//        1.0f,  0.0f,
-//        0.0f,  1.0f,
-//        0.0f,  0.0f
     };
 
     private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
-
     private ByteBuffer indexBuffer;    // Buffer for index-array
-
     private int texture;
-
-
     private CardboardOverlayView mOverlayView;
-
-
     private CardboardView cardboardView;
     private SurfaceTexture surface;
     private float[] mView;
     private float[] mCamera;
-
-    private void releaseCameraAndPreview() {
-        if (myCamera != null) {
-            myCamera.release();
-            myCamera = null;
-        }
-    }
 
     public void startCamera(int texture)
     {
@@ -142,12 +111,11 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         surface.setOnFrameAvailableListener(this);
 
         try {
-            releaseCameraAndPreview();
             myCamera = Camera.open();
         }
         catch (Exception e) {
             //ADDED try catch to isolate problem.
-            Log.w("MainActivity","CAM SERVICE FAILED");
+            Log.w("MainActivity","CAMERA SERVICE FAILED, OTHER PROCESS HAS LOCKED CAMERA");
         }
         try
         {
@@ -157,7 +125,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         }
         catch (IOException ioe)
         {
-            Log.w("MainActivity","CAM LAUNCH FAILED");
+            Log.w("MainActivity","CAMERA LAUNCH FAILED");
         }
     }
 
@@ -229,26 +197,22 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         cardboardView.setRenderer(this);
         setCardboardView(cardboardView);
 
-//        mModelCube = new float[16];
         mCamera = new float[16];
         mView = new float[16];
-//        mModelViewProjection = new float[16];
-//        mModelView = new float[16];
-//        mModelFloor = new float[16];
-//        mHeadView = new float[16];
-//        mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-//
-//
         mOverlayView = (CardboardOverlayView) findViewById(R.id.overlay);
         mOverlayView.show3DToast("Pull the magnet when you find an object.");
     }
 
     @Override
     public void onPause() {
-        super.onPause();  // Always call the superclass method first
+        super.onPause();
 
         // Release the Camera because we don't need it when paused
         // and other activities might need to use it.
+        this.releaseCamera();
+    }
+
+    private void releaseCamera() {
         if (myCamera != null) {
             myCamera.stopPreview();
             myCamera.release();
@@ -306,11 +270,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
 
         texture = createTexture();
         startCamera(texture);
-
-
     }
-
-
 
     /**
      * Prepares OpenGL ES before we draw a frame.
@@ -318,35 +278,15 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
      */
     @Override
     public void onNewFrame(HeadTransform headTransform) {
-//        GLES20.glUseProgram(mGlProgram);
-//
-//        mModelViewProjectionParam = GLES20.glGetUniformLocation(mGlProgram, "u_MVP");
-//        mLightPosParam = GLES20.glGetUniformLocation(mGlProgram, "u_LightPos");
-//        mModelViewParam = GLES20.glGetUniformLocation(mGlProgram, "u_MVMatrix");
-//        mModelParam = GLES20.glGetUniformLocation(mGlProgram, "u_Model");
-//        mIsFloorParam = GLES20.glGetUniformLocation(mGlProgram, "u_IsFloor");
-//
-//        // Build the Model part of the ModelView matrix.
-//        Matrix.rotateM(mModelCube, 0, TIME_DELTA, 0.5f, 0.5f, 1.0f);
-//
-//        // Build the myCamera matrix and apply it to the ModelView.
-//        Matrix.setLookAtM(mCamera, 0, 0.0f, 0.0f, CAMERA_Z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-//
-//        headTransform.getHeadView(mHeadView, 0);
-//
-//        checkGLError("onReadyToDraw");
-
         float[] mtx = new float[16];
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
         surface.updateTexImage();
         surface.getTransformMatrix(mtx);
-
     }
 
     @Override
     public void onFrameAvailable(SurfaceTexture arg0) {
         this.cardboardView.requestRender();
-
     }
 
     /**
@@ -389,8 +329,6 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         GLES20.glDisableVertexAttribArray(mTextureCoordHandle);
 
         Matrix.multiplyMM(mView, 0, transform.getEyeView(), 0, mCamera, 0);
-
-
     }
 
     @Override
@@ -403,108 +341,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
      */
     @Override
     public void onCardboardTrigger() {
-//        Log.i(TAG, "onCardboardTrigger");
-//
-//        if (isLookingAtObject()) {
-//            mScore++;
-//            mOverlayView.show3DToast("Found it! Look around for another one.\nScore = " + mScore);
-//            hideObject();
-//        } else {
-//            mOverlayView.show3DToast("Look around to find the object!");
-//        }
-//        // Always give user feedback
-//        mVibrator.vibrate(50);
-    }
-
-
-//    /**
-//     * Find a new random position for the object.
-//     * We'll rotate it around the Y-axis so it's out of sight, and then up or down by a little bit.
-//     */
-//    private void hideObject() {
-//        float[] rotationMatrix = new float[16];
-//        float[] posVec = new float[4];
-//
-//        // First rotate in XZ plane, between 90 and 270 deg away, and scale so that we vary
-//        // the object's distance from the user.
-//        float angleXZ = (float) Math.random() * 180 + 90;
-//        Matrix.setRotateM(rotationMatrix, 0, angleXZ, 0f, 1f, 0f);
-//        float oldObjectDistance = mObjectDistance;
-//        mObjectDistance = (float) Math.random() * 15 + 5;
-//        float objectScalingFactor = mObjectDistance / oldObjectDistance;
-//        Matrix.scaleM(rotationMatrix, 0, objectScalingFactor, objectScalingFactor, objectScalingFactor);
-//        Matrix.multiplyMV(posVec, 0, rotationMatrix, 0, mModelCube, 12);
-//
-//        // Now get the up or down angle, between -20 and 20 degrees
-//        float angleY = (float) Math.random() * 80 - 40; // angle in Y plane, between -40 and 40
-//        angleY = (float) Math.toRadians(angleY);
-//        float newY = (float)Math.tan(angleY) * mObjectDistance;
-//
-//        Matrix.setIdentityM(mModelCube, 0);
-//        Matrix.translateM(mModelCube, 0, posVec[0], newY, posVec[2]);
-//    }
-
-    /**
-     * Check if user is looking at object by calculating where the object is in eye-space.
-     * @return
-     */
-//    private boolean isLookingAtObject() {
-//        float[] initVec = {0, 0, 0, 1.0f};
-//        float[] objPositionVec = new float[4];
-//
-//        // Convert object space to myCamera space. Use the headView from onNewFrame.
-//        Matrix.multiplyMM(mModelView, 0, mHeadView, 0, mModelCube, 0);
-//        Matrix.multiplyMV(objPositionVec, 0, mModelView, 0, initVec, 0);
-//
-//        float pitch = (float)Math.atan2(objPositionVec[1], -objPositionVec[2]);
-//        float yaw = (float)Math.atan2(objPositionVec[0], -objPositionVec[2]);
-//
-//        Log.i(TAG, "Object position: X: " + objPositionVec[0]
-//                + "  Y: " + objPositionVec[1] + " Z: " + objPositionVec[2]);
-//        Log.i(TAG, "Object Pitch: " + pitch +"  Yaw: " + yaw);
-//
-//        return (Math.abs(pitch) < PITCH_LIMIT) && (Math.abs(yaw) < YAW_LIMIT);
-//    }
-}
-
-
-/*package no.ntnu.tpg4850.frugalar;
-
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-
-
-public class MainActivity extends ActionBarActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        //When magnetic button has been triggered
+        Log.i(TAG, "onCardboardTrigger");
     }
 }
-*/
