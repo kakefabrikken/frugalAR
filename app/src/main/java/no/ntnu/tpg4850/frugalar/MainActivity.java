@@ -56,17 +56,16 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     private final String fragmentShaderCode =
             "#extension GL_OES_EGL_image_external : require\n"+
                     "precision mediump float;" +
-                    "varying vec2 textureCoordinate;                            \n" +
-                    "uniform samplerExternalOES s_texture;               \n" +
+                    "varying vec2 textureCoordinate;\n" +
+                    "uniform samplerExternalOES s_texture;\n" +
                     "void main(void) {" +
                     "  gl_FragColor = texture2D( s_texture, textureCoordinate );\n" +
-                    //"  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n" +
                     "}";
 
-    private FloatBuffer vertexBuffer, textureVerticesBuffer, vertexBuffer2;
-    private ShortBuffer drawListBuffer, buf2;
+    private FloatBuffer vertexBuffer, textureVerticesBuffer;
+    private ShortBuffer drawListBuffer;
     private int mProgram;
-    private int mPositionHandle, mPositionHandle2;
+    private int mPositionHandle;
     private int mColorHandle;
     private int mTextureCoordHandle;
 
@@ -80,11 +79,6 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
             1.0f, 1.0f,   // 3. right - top
     };
 
-
-
-
-    //, 1, 4, 3, 4, 5, 3
-//    private short drawOrder[] =  {0, 1, 2, 1, 3, 2 };//, 4, 5, 0, 5, 0, 1 }; // order to draw vertices
     private short drawOrder[] =  {0, 2, 1, 1, 2, 3 }; // order to draw vertices
     private short drawOrder2[] = {2, 0, 3, 3, 0, 1}; // order to draw vertices
 
@@ -104,9 +98,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     private float[] mView;
     private float[] mCamera;
 
-    public void startCamera(int texture)
-    {
-
+    public void startCamera(int texture) {
         surface = new SurfaceTexture(texture);
         surface.setOnFrameAvailableListener(this);
 
@@ -117,20 +109,17 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
             //ADDED try catch to isolate problem.
             Log.w("MainActivity","CAMERA SERVICE FAILED, OTHER PROCESS HAS LOCKED CAMERA");
         }
-        try
-        {
+        try {
 
             myCamera.setPreviewTexture(surface);
             myCamera.startPreview();
         }
-        catch (IOException ioe)
-        {
+        catch (IOException ioe) {
             Log.w("MainActivity","CAMERA LAUNCH FAILED");
         }
     }
 
-    static private int createTexture()
-    {
+    static private int createTexture() {
         int[] texture = new int[1];
 
         GLES20.glGenTextures(1,texture, 0);
@@ -200,7 +189,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         mCamera = new float[16];
         mView = new float[16];
         mOverlayView = (CardboardOverlayView) findViewById(R.id.overlay);
-        mOverlayView.show3DToast("Pull the magnet when you find an object.");
+        mOverlayView.show3DToast("FrugalAR");
     }
 
     @Override
@@ -303,13 +292,10 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         GLES20.glActiveTexture(GL_TEXTURE_EXTERNAL_OES);
         GLES20.glBindTexture(GL_TEXTURE_EXTERNAL_OES, texture);
 
-
-
         mPositionHandle = GLES20.glGetAttribLocation(mProgram, "position");
         GLES20.glEnableVertexAttribArray(mPositionHandle);
         GLES20.glVertexAttribPointer(mPositionHandle, COORDS_PER_VERTEX, GLES20.GL_FLOAT,
                 false,vertexStride, vertexBuffer);
-
 
         mTextureCoordHandle = GLES20.glGetAttribLocation(mProgram, "inputTextureCoordinate");
         GLES20.glEnableVertexAttribArray(mTextureCoordHandle);
@@ -317,8 +303,6 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
                 false,vertexStride, textureVerticesBuffer);
 
         mColorHandle = GLES20.glGetAttribLocation(mProgram, "s_texture");
-
-
 
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length,
                 GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
@@ -335,10 +319,6 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     public void onFinishFrame(Viewport viewport) {
     }
 
-    /**
-     * Increment the score, hide the object, and give feedback if the user pulls the magnet while
-     * looking at the object. Otherwise, remind the user what to do.
-     */
     @Override
     public void onCardboardTrigger() {
         //When magnetic button has been triggered
