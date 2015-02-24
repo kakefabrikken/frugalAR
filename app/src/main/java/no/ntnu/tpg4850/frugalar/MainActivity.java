@@ -19,20 +19,14 @@ package no.ntnu.tpg4850.frugalar;
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.hardware.Camera;
-import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import com.google.vrtoolkit.cardboard.*;
-
 import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
+
 
 /**
  * Cardboard application. Will display a camera preview for each eye.
@@ -47,8 +41,8 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     private CardboardOverlayView mOverlayView;
     private CardboardView cardboardView;
     private SurfaceTexture surface;
-    private float[] mView;
-    private float[] mCamera;
+    //private float[] mView;
+    //private float[] mCamera;
     private CameraEyeTransformer cameraPreviewTransformer;
 
     public void startCamera(int texture) {
@@ -87,8 +81,8 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         cardboardView.setRenderer(this);
         setCardboardView(cardboardView);
 
-        mCamera = new float[16];
-        mView = new float[16];
+        //mCamera = new float[16];
+        //mView = new float[16];
         mOverlayView = (CardboardOverlayView) findViewById(R.id.overlay);
         mOverlayView.show3DToast("FrugalAR");
     }
@@ -159,7 +153,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     @Override
     public void onDrawEye(EyeTransform transform) {
         cameraPreviewTransformer.drawEye(texture);
-        Matrix.multiplyMM(mView, 0, transform.getEyeView(), 0, mCamera, 0);
+        //Matrix.multiplyMM(mView, 0, transform.getEyeView(), 0, mCamera, 0);
     }
 
     @Override
