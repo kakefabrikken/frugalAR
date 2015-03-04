@@ -16,22 +16,33 @@
 
 package no.ntnu.tpg4850.frugalar;
 
+import android.app.FragmentTransaction;
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.hardware.Camera;
 import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.Log;
+
+import com.customlbs.library.IndoorsException;
+import com.customlbs.library.IndoorsFactory;
+import com.customlbs.library.IndoorsLocationListener;
+import com.customlbs.library.model.Building;
+import com.customlbs.library.model.Zone;
+import com.customlbs.shared.Coordinate;
+import com.customlbs.surface.library.IndoorsSurfaceFactory;
+import com.customlbs.surface.library.IndoorsSurfaceFragment;
 import com.google.vrtoolkit.cardboard.*;
 import javax.microedition.khronos.egl.EGLConfig;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 
 /**
  * Cardboard application. Will display a camera preview for each eye.
  */
-public class MainActivity extends CardboardActivity implements CardboardView.StereoRenderer, OnFrameAvailableListener {
+public class MainActivity extends CardboardActivity implements CardboardView.StereoRenderer, OnFrameAvailableListener, IndoorsLocationListener {
 
     private static final String TAG = "MainActivity";
 
@@ -41,6 +52,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     private CardboardOverlayView mOverlayView;
     private CardboardView cardboardView;
     private SurfaceTexture surface;
+    private IndoorsSurfaceFragment indoorsFragment;
     //private float[] mView;
     //private float[] mCamera;
     private CameraEyeTransformer cameraPreviewTransformer;
@@ -74,6 +86,18 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        IndoorsFactory.Builder indoorsBuilder = new IndoorsFactory.Builder();
+        IndoorsSurfaceFactory.Builder surfaceBuilder = new IndoorsSurfaceFactory.Builder();
+        indoorsBuilder.setContext(this);
+        indoorsBuilder.setApiKey("8fe0cc81-2098-41cf-b8c5-9fa5874ef8a6");
+        indoorsBuilder.setBuildingId((long) 272563595);
+        indoorsBuilder.setUserInteractionListener(this);
+        surfaceBuilder.setIndoorsBuilder(indoorsBuilder);
+
+        indoorsFragment = surfaceBuilder.build();
+
+        //FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         this.cameraPreviewTransformer = new CameraEyeTransformer();
         setContentView(R.layout.common_ui);
@@ -164,5 +188,46 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     public void onCardboardTrigger() {
         //When magnetic button has been triggered
         Log.i(TAG, "onCardboardTrigger");
+    }
+
+    @Override
+    public void loadingBuilding(int i) {
+        Log.i(TAG, "Loading Building");
+
+    }
+
+    @Override
+    public void buildingLoaded(Building building) {
+        Log.i(TAG, "Loaded Building");
+    }
+
+    @Override
+    public void leftBuilding(Building building) {
+        Log.i(TAG, "Left building");
+    }
+
+    @Override
+    public void positionUpdated(Coordinate coordinate, int i) {
+        Log.i(TAG, "position update" + coordinate);
+    }
+
+    @Override
+    public void orientationUpdated(float v) {
+        Log.i(TAG, "Orientation");
+    }
+
+    @Override
+    public void changedFloor(int i, String s) {
+        Log.i(TAG, "Changed floor");
+    }
+
+    @Override
+    public void enteredZones(List<Zone> zones) {
+        Log.i(TAG, "Entered zone");
+    }
+
+    @Override
+    public void onError(IndoorsException e) {
+        Log.i(TAG, "Error");
     }
 }

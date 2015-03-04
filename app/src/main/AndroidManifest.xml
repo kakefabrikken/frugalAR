@@ -33,6 +33,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service
+            android:name="com.customlbs.service.Worker"
+            android:process=":remote" >
+        </service>
+        <service android:name="com.customlbs.service.rest.batch.RestBatchService" >
+        </service>
+
+        <receiver
+            android:name="com.customlbs.service.rest.batch.ConnectivityReceiver"
+            android:enabled="false" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
