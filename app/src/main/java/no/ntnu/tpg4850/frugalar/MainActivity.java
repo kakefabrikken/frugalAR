@@ -87,7 +87,6 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        location = new LocationService(this);
 
 
         this.cameraPreviewTransformer = new CameraEyeTransformer();
@@ -100,6 +99,8 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         //mView = new float[16];
         mOverlayView = (CardboardOverlayView) findViewById(R.id.overlay);
         mOverlayView.show3DToast("FrugalAR");
+
+        location = new LocationService(this, mOverlayView);
     }
 
     @Override

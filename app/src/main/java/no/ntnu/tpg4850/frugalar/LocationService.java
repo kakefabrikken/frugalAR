@@ -20,8 +20,13 @@ import java.util.List;
 public class LocationService implements IndoorsLocationListener {
 
     private static final String TAG = "Location";
+    private CardboardActivity parent;
+    private MessageOverlay overlay;
 
-    public LocationService(CardboardActivity parent) {
+    public LocationService(CardboardActivity parent, MessageOverlay overlay) {
+        this.parent = parent;
+        this.overlay = overlay;
+
         IndoorsFactory.Builder indoorsBuilder = new IndoorsFactory.Builder();
         IndoorsSurfaceFactory.Builder surfaceBuilder = new IndoorsSurfaceFactory.Builder();
         indoorsBuilder.setContext(parent);
@@ -44,22 +49,26 @@ public class LocationService implements IndoorsLocationListener {
 
     @Override
     public void buildingLoaded(Building building) {
-        Log.i(TAG, "Loaded Building");
+        Log.i(TAG, "Loaded Building " + building.getName());
     }
 
     @Override
     public void leftBuilding(Building building) {
-        Log.i(TAG, "Left building");
+        Log.i(TAG, "Left building " +building.getName());
     }
 
     @Override
     public void positionUpdated(Coordinate coordinate, int i) {
         Log.i(TAG, "position update" + coordinate);
+        if(coordinate != null) {
+            this.overlay.show3DToast(coordinate.toString());
+        }
     }
 
     @Override
     public void orientationUpdated(float v) {
-        Log.i(TAG, "Orientation");
+        //Sends NAN if no orientation
+        //Log.i(TAG, "Orientation");
     }
 
     @Override
@@ -69,7 +78,10 @@ public class LocationService implements IndoorsLocationListener {
 
     @Override
     public void enteredZones(List<Zone> zones) {
-        Log.i(TAG, "Entered zone");
+        Log.i(TAG, "Entered zone " + zones.size());
+        for( Zone z: zones) {
+            Log.i(TAG, z.getDescription() + z.getName());
+        }
     }
 
     @Override
