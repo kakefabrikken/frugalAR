@@ -36,8 +36,6 @@ public class LocationService implements IndoorsLocationListener {
         surfaceBuilder.setIndoorsBuilder(indoorsBuilder);
 
         indoorsFragment = surfaceBuilder.build();
-
-        //FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
     }
     private IndoorsSurfaceFragment indoorsFragment;
 

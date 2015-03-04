@@ -15,28 +15,16 @@
  */
 
 package no.ntnu.tpg4850.frugalar;
-
-import android.app.FragmentTransaction;
+;
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.hardware.Camera;
-import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.customlbs.library.IndoorsException;
-import com.customlbs.library.IndoorsFactory;
-import com.customlbs.library.IndoorsLocationListener;
-import com.customlbs.library.model.Building;
-import com.customlbs.library.model.Zone;
-import com.customlbs.shared.Coordinate;
-import com.customlbs.surface.library.IndoorsSurfaceFactory;
-import com.customlbs.surface.library.IndoorsSurfaceFragment;
 import com.google.vrtoolkit.cardboard.*;
 import javax.microedition.khronos.egl.EGLConfig;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
 
 
 /**
@@ -86,8 +74,6 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
 
         this.cameraPreviewTransformer = new CameraEyeTransformer();
         setContentView(R.layout.common_ui);
