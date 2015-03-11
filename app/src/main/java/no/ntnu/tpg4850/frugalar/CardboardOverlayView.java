@@ -33,7 +33,7 @@ import android.widget.TextView;
 /**
  * Contains two sub-views to provide a simple stereo HUD.
  */
-public class CardboardOverlayView extends LinearLayout {
+public class CardboardOverlayView extends LinearLayout implements MessageOverlay  {
     private static final String TAG = CardboardOverlayView.class.getSimpleName();
     private final CardboardOverlayEyeView mLeftView;
     private final CardboardOverlayEyeView mRightView;

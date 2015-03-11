@@ -15,11 +15,9 @@
  */
 
 package no.ntnu.tpg4850.frugalar;
-
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.hardware.Camera;
-import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import com.google.vrtoolkit.cardboard.*;
@@ -41,6 +39,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     private CardboardOverlayView mOverlayView;
     private CardboardView cardboardView;
     private SurfaceTexture surface;
+    private LocationService location;
     //private float[] mView;
     //private float[] mCamera;
     private CameraEyeTransformer cameraPreviewTransformer;
@@ -85,6 +84,8 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         //mView = new float[16];
         mOverlayView = (CardboardOverlayView) findViewById(R.id.overlay);
         mOverlayView.show3DToast("FrugalAR");
+
+        location = new LocationService(this, mOverlayView);
     }
 
     @Override
