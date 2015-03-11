@@ -15,7 +15,6 @@
  */
 
 package no.ntnu.tpg4850.frugalar;
-;
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.hardware.Camera;
