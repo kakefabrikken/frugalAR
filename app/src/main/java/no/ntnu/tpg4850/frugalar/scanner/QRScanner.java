@@ -1,5 +1,6 @@
 package no.ntnu.tpg4850.frugalar.scanner;
 
+import android.graphics.Point;
 import android.hardware.Camera;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ import no.ntnu.tpg4850.frugalar.CardboardOverlayView;
 public class QRScanner implements Camera.PreviewCallback {
 
     private static final String TAG = "QRScanner";
+
     private ImageScanner mScanner;
     private CardboardOverlayView mOverlayView;
     private Camera mCamera;
@@ -43,6 +45,17 @@ public class QRScanner implements Camera.PreviewCallback {
         }
     }
 
+    public Point getMidpoint(int id) {
+        //TODO: Only 1 qr code can be kept so id irrelevant. Use 0 as value.
+        int[] v = this.qrCodeBounds;
+        if(v != null && v.length>=3) {
+            Point p = new Point((v[0]+v[2])/2, (v[1]+v[3])/2);
+            return p;
+        }
+        return null;
+    }
+
+    
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
@@ -63,6 +76,9 @@ public class QRScanner implements Camera.PreviewCallback {
                 Log.i(TAG, "barcode result " + sym.getData());
                 this.qrId = sym.getData();
                 this.qrCodeBounds = sym.getBounds();
+                for(int i = 0; i<this.qrCodeBounds.length; i++) {
+                    Log.i(TAG, this.qrCodeBounds[i] + "");
+                }
             }
         }
 
