@@ -17,11 +17,14 @@ public class QRScanner implements Camera.PreviewCallback {
     private ImageScanner mScanner;
     private CardboardOverlayView mOverlayView;
     private Camera mCamera;
+    //TODO:Handle more than 1 qr at the same time.
+    //TODO: Interpolation between detections, and trail off behavior. IE. QR object with bounds and
+    //TODO:id kept for a fixed period of time, and removed if not renewed by a new sighting. Can also use accelorometer to improve this behavior.
     private int[] qrCodeBounds = null;
     private String qrId = null;
 
     public QRScanner(CardboardOverlayView mOverlayView) {
-        this.mOverlayView = mOverlayView; //TEMP WAY of showing data in text hud
+        this.mOverlayView = mOverlayView; //TODO: TEMP WAY of showing data in text hud
         setupScanner();
     }
 
