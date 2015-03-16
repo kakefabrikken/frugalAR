@@ -63,7 +63,7 @@ public class QRScanner implements Camera.PreviewCallback {
             p[0] = new Point(v[0], v[1]);
             p[1] = new Point(v[0]+v[2], v[1]);
             p[2] = new Point(v[0]+v[2], v[1]+ v[3]);
-            p[2] = new Point(v[0], v[1]+ v[3]);
+            p[3] = new Point(v[0], v[1]+ v[3]);
         }
         return p;
     }
