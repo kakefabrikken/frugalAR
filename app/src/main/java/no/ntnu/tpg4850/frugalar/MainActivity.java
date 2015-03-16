@@ -25,13 +25,6 @@ import com.google.vrtoolkit.cardboard.*;
 import javax.microedition.khronos.egl.EGLConfig;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import net.sourceforge.zbar.ImageScanner;
-import net.sourceforge.zbar.Image;
-import net.sourceforge.zbar.Symbol;
-import net.sourceforge.zbar.SymbolSet;
-import net.sourceforge.zbar.Config;
-
-import no.ntnu.tpg4850.frugalar.scanner.BarcodeFormat;
 import no.ntnu.tpg4850.frugalar.scanner.QRScanner;
 
 
