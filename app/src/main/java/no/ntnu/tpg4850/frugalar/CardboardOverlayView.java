@@ -78,6 +78,10 @@ public class CardboardOverlayView extends LinearLayout {
         startAnimation(mTextFadeAnimation);
     }
 
+    public void showPoint() {
+        makePoint();
+    }
+
     private abstract class EndAnimationListener implements Animation.AnimationListener {
         @Override public void onAnimationRepeat(Animation animation) {}
         @Override public void onAnimationStart(Animation animation) {}
@@ -141,8 +145,8 @@ public class CardboardOverlayView extends LinearLayout {
 
             Paint bloodred = new Paint();
             bloodred.setARGB(1, 138, 7 ,7);
-            float xkoord = 0;
-            float ykoord = 0;
+            float xkoord = 320;
+            float ykoord = 640;
 
             point.drawPoint(xkoord, ykoord, bloodred);
 
