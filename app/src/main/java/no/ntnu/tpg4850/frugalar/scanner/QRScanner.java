@@ -17,6 +17,8 @@ public class QRScanner implements Camera.PreviewCallback {
     private ImageScanner mScanner;
     private CardboardOverlayView mOverlayView;
     private Camera mCamera;
+    private int[] qrCodeBounds = null;
+    private String qrId = null;
 
     public QRScanner(CardboardOverlayView mOverlayView) {
         this.mOverlayView = mOverlayView; //TEMP WAY of showing data in text hud
@@ -40,7 +42,6 @@ public class QRScanner implements Camera.PreviewCallback {
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        Log.i(TAG, "ON PREVIEW FRAME");
         Camera.Parameters parameters = camera.getParameters();
         Camera.Size size = parameters.getPreviewSize();
         int width = size.width;
@@ -49,25 +50,18 @@ public class QRScanner implements Camera.PreviewCallback {
         barcode.setData(data);
 
         int result = mScanner.scanImage(barcode);
-
         if (result != 0) {
-            //releaseCamera();
             mOverlayView.show3DToast("QR");
-            //Log.i(TAG, "ROCOGNIZED!");
             SymbolSet syms = mScanner.getResults();
             Log.i(TAG, syms.toString());
             for (Symbol sym : syms) {
+                //TODO: How to handle more than 1 qr in the image.
+                //Currently assume that only one qr code is detected for each preview frame.
                 Log.i(TAG, "barcode result " + sym.getData());
-                for(int i: sym.getBounds()) {
-                    Log.i(TAG, i + " pos");
-                }
-                Log.i(TAG, "barcode position" + sym.getBounds());
-                Log.i(TAG, "barcode position" + sym.getOrientation());
-                Log.i(TAG, "barcode position" + sym.toString());
-                //barcodeScanned = true;
+                this.qrId = sym.getData();
+                this.qrCodeBounds = sym.getBounds();
             }
         }
-        //mCamera.setOneShotPreviewCallback(this);
 
     }
 }
