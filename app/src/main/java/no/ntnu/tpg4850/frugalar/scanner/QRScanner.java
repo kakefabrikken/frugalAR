@@ -55,6 +55,22 @@ public class QRScanner implements Camera.PreviewCallback {
         return null;
     }
 
+    public Point[] getBounds(int id) {
+        int[] v = this.qrCodeBounds;
+        int corners = 4;
+        Point[] p = new Point[corners];
+        if(v != null && v.length>=3) {
+            p[0] = new Point(v[0], v[1]);
+            p[1] = new Point(v[0]+v[2], v[1]);
+            p[2] = new Point(v[0]+v[2], v[1]+ v[3]);
+            p[2] = new Point(v[0], v[1]+ v[3]);
+        }
+        return p;
+    }
+
+    public int[] getBoundsRect(int id) {
+        return this.qrCodeBounds;
+    }
     
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
