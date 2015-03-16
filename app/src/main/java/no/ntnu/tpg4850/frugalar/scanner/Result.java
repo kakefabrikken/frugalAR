@@ -1,4 +1,6 @@
-package no.ntnu.tpg4850.frugalar;
+package no.ntnu.tpg4850.frugalar.scanner;
+
+import no.ntnu.tpg4850.frugalar.scanner.BarcodeFormat;
 
 public class Result {
     private String mContents;

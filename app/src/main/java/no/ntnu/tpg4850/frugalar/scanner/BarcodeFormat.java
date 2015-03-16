@@ -1,4 +1,4 @@
-package no.ntnu.tpg4850.frugalar;
+package no.ntnu.tpg4850.frugalar.scanner;
 
 import net.sourceforge.zbar.Symbol;
 
