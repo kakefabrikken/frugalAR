@@ -71,7 +71,7 @@ public class QRScanner implements Camera.PreviewCallback {
     public int[] getBoundsRect(int id) {
         return this.qrCodeBounds;
     }
-    
+
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         Camera.Parameters parameters = camera.getParameters();
