@@ -141,14 +141,16 @@ public class CardboardOverlayView extends LinearLayout {
 
         public void setPoint() {
             point = new Canvas();
-            imageView.draw(point);
 
             Paint bloodred = new Paint();
-            bloodred.setARGB(1, 138, 7 ,7);
-            float xkoord = 320;
-            float ykoord = 640;
+            //bloodred.setARGB(1, 138, 7 ,7);
+            bloodred.setColor(Color.BLACK);
+            bloodred.setAntiAlias(true);
+            float xkoord = 200;
+            float ykoord = 200;
 
             point.drawPoint(xkoord, ykoord, bloodred);
+            imageView.draw(point);
 
         }
 

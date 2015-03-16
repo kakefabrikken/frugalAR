@@ -195,7 +195,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         if (result != 0) {
             //releaseCamera();
             //mOverlayView.show3DToast("QR");
-            mOverlayView.
+            mOverlayView.showPoint();
             //Log.i(TAG, "ROCOGNIZED!");
 
             /*SymbolSet syms = mScanner.getResults();
