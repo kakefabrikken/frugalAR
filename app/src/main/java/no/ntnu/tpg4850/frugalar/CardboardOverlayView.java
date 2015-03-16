@@ -17,7 +17,9 @@
 package no.ntnu.tpg4850.frugalar;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -86,6 +88,11 @@ public class CardboardOverlayView extends LinearLayout {
         mRightView.setOffset(-offset);
     }
 
+    private void makePoint() {
+        mLeftView.setPoint();
+        mRightView.setPoint();
+    }
+
     private void setText(String text) {
         mLeftView.setText(text);
         mRightView.setText(text);
@@ -110,6 +117,7 @@ public class CardboardOverlayView extends LinearLayout {
     private class CardboardOverlayEyeView extends ViewGroup {
         private final ImageView imageView;
         private final TextView textView;
+        private Canvas point;
         private float offset;
 
         public CardboardOverlayEyeView(Context context, AttributeSet attrs) {
@@ -125,6 +133,19 @@ public class CardboardOverlayView extends LinearLayout {
             textView.setGravity(Gravity.CENTER);
             textView.setShadowLayer(3.0f, 0.0f, 0.0f, Color.DKGRAY);
             addView(textView);
+        }
+
+        public void setPoint() {
+            point = new Canvas();
+            imageView.draw(point);
+
+            Paint bloodred = new Paint();
+            bloodred.setARGB(1, 138, 7 ,7);
+            float xkoord = 0;
+            float ykoord = 0;
+
+            point.drawPoint(xkoord, ykoord, bloodred);
+
         }
 
         public void setColor(int color) {
