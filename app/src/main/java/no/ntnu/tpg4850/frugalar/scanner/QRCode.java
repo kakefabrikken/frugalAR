@@ -8,13 +8,19 @@ import java.util.Date;
 public class QRCode {
     public int id;
     public Date previouslySeen;
+    public int[] bounds;
 
-    public QRCode(int id) {
+    public QRCode(int id, int[] bounds) {
         this.id = id;
+        this.bounds = bounds;
         this.previouslySeen = new Date();
     }
 
     public void updateDate() {
         this.previouslySeen = new Date();
+    }
+
+    public String toString() {
+        return "ID: " + this.id + " Last seen: " + this.previouslySeen;
     }
 }
