@@ -121,11 +121,14 @@ public class CardboardOverlayView extends LinearLayout {
     private class CardboardOverlayEyeView extends ViewGroup {
         private final ImageView imageView;
         private final TextView textView;
-        private Canvas point;
+        //private final ImageView redPoint;
+        //private Canvas point;
+        private PointView pointView;
         private float offset;
 
         public CardboardOverlayEyeView(Context context, AttributeSet attrs) {
             super(context, attrs);
+
             imageView = new ImageView(context, attrs);
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setAdjustViewBounds(true);  // Preserve aspect ratio.
@@ -137,6 +140,10 @@ public class CardboardOverlayView extends LinearLayout {
             textView.setGravity(Gravity.CENTER);
             textView.setShadowLayer(3.0f, 0.0f, 0.0f, Color.DKGRAY);
             addView(textView);
+
+            pointView = new PointView(context);
+            addView(pointView);
+
         }
 
         public void setPoint() {

@@ -97,6 +97,12 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         setupScanner();
     }
 
+    public void registerPointView() {
+        PointView pv = new PointView(this);
+
+
+    }
+
     public void setupScanner() {
         mScanner = new ImageScanner();
         mScanner.setConfig(0, Config.X_DENSITY, 3);
