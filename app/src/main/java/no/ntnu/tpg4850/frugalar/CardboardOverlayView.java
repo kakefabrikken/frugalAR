@@ -145,7 +145,7 @@ public class CardboardOverlayView extends LinearLayout {
             addView(pointView);
 
         }
-
+        /*
         public void setPoint() {
             point = new Canvas();
 
@@ -160,6 +160,7 @@ public class CardboardOverlayView extends LinearLayout {
             imageView.draw(point);
 
         }
+        */
 
         public void setColor(int color) {
             imageView.setColorFilter(color);
