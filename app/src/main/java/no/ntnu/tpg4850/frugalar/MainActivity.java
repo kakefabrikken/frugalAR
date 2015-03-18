@@ -19,25 +19,19 @@ package no.ntnu.tpg4850.frugalar;
 import android.graphics.SurfaceTexture;
 import android.graphics.SurfaceTexture.OnFrameAvailableListener;
 import android.hardware.Camera;
-import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.Log;
 import com.google.vrtoolkit.cardboard.*;
 import javax.microedition.khronos.egl.EGLConfig;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import net.sourceforge.zbar.ImageScanner;
-import net.sourceforge.zbar.Image;
-import net.sourceforge.zbar.Symbol;
-import net.sourceforge.zbar.SymbolSet;
-import android.text.TextUtils;
-import net.sourceforge.zbar.Config;
+import no.ntnu.tpg4850.frugalar.scanner.QRScanner;
 
 
 /**
  * Cardboard application. Will display a camera preview for each eye.
  */
-public class MainActivity extends CardboardActivity implements CardboardView.StereoRenderer, OnFrameAvailableListener,  Camera.PreviewCallback {
+public class MainActivity extends CardboardActivity implements CardboardView.StereoRenderer, OnFrameAvailableListener {
 
     private static final String TAG = "MainActivity";
 
@@ -50,7 +44,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     //private float[] mView;
     //private float[] mCamera;
     private CameraEyeTransformer cameraPreviewTransformer;
-    private ImageScanner mScanner;
+    private QRScanner qr;
 
 
     public void startCamera(int texture) {
@@ -67,8 +61,9 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         try {
 
             myCamera.setPreviewTexture(surface);
-            myCamera.setPreviewCallback(this);
+            myCamera.setPreviewCallback(this.qr);
             myCamera.startPreview();
+            this.qr.setCamera(myCamera);
         }
         catch (IOException ioe) {
             Log.w("MainActivity","CAMERA LAUNCH FAILED");
@@ -94,18 +89,8 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         //mView = new float[16];
         mOverlayView = (CardboardOverlayView) findViewById(R.id.overlay);
         mOverlayView.show3DToast("FrugalAR");
-        setupScanner();
-    }
+        qr = new QRScanner(this.mOverlayView);
 
-    public void setupScanner() {
-        mScanner = new ImageScanner();
-        mScanner.setConfig(0, Config.X_DENSITY, 3);
-        mScanner.setConfig(0, Config.Y_DENSITY, 3);
-
-        mScanner.setConfig(Symbol.NONE, Config.ENABLE, 0);
-        for(BarcodeFormat format : BarcodeFormat.ALL_FORMATS) {
-            mScanner.setConfig(format.getId(), Config.ENABLE, 1);
-        }
     }
 
     @Override
@@ -181,44 +166,6 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     public void onFinishFrame(Viewport viewport) {
     }
 
-    public void onPreviewFrame(byte[] data, Camera camera) {
-        Log.i(TAG, "ON PREVIEW FRAME");
-        Camera.Parameters parameters = camera.getParameters();
-        Camera.Size size = parameters.getPreviewSize();
-        int width = size.width;
-        int height = size.height;
-        Image barcode = new Image(width, height, "Y800");
-        barcode.setData(data);
-
-        int result = mScanner.scanImage(barcode);
-
-        if (result != 0) {
-            //releaseCamera();
-            mOverlayView.show3DToast("QR");
-            //Log.i(TAG, "ROCOGNIZED!");
-
-            /*SymbolSet syms = mScanner.getResults();
-            Result rawResult = new Result();
-            for (Symbol sym : syms) {
-                String symData = sym.getData();
-                if (!TextUtils.isEmpty(symData)) {
-                    rawResult.setContents(symData);
-                    rawResult.setBarcodeFormat(BarcodeFormat.getFormatById(sym.getType()));
-                    Log.i(TAG, symData);
-                    break;
-
-                }
-
-
-
-            }
-            */
-            myCamera.setOneShotPreviewCallback(this);
-        } else {
-            myCamera.setOneShotPreviewCallback(this);
-        }
-
-    }
     @Override
     public void onCardboardTrigger() {
         //When magnetic button has been triggered
