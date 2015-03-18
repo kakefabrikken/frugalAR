@@ -19,10 +19,18 @@ public class QRStorage {
         }
         else {
 
-            storage.get(QRStorage.getIndexOfId(this.storage, code.id)).
+            storage.get(QRStorage.getIndexOfId(this.storage, code.id)).updateDate();
         }
         return isNew;
     }
+
+    public QRCode get(int id) {
+        int idx = QRStorage.getIndexOfId(this.storage, id);
+        if(idx>-1) {
+            return this.storage.get(idx);
+        }
+        return null;
+     }
 
     private static boolean containsId(ArrayList<QRCode> list, int id) {
         for(QRCode c: list) {
@@ -35,7 +43,7 @@ public class QRStorage {
 
     private static int getIndexOfId(ArrayList<QRCode> list, int id) {
         for(int i = 0; i<list.size(); i++) {
-            if(list[i].id == id) {
+            if(list.get(i).id == id) {
                 return i;
             }
         }
