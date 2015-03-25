@@ -1,7 +1,6 @@
 package no.ntnu.tpg4850.frugalar.scanner;
 
 import net.sourceforge.zbar.Symbol;
-
 import java.util.List;
 import java.util.ArrayList;
 

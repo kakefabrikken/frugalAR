@@ -1,10 +1,7 @@
 package no.ntnu.tpg4850.frugalar.controller;
 
 import android.hardware.Camera;
-import android.util.Log;
-
 import java.util.ArrayList;
-
 import no.ntnu.tpg4850.frugalar.CardboardOverlayView;
 import no.ntnu.tpg4850.frugalar.scanner.QRCode;
 import no.ntnu.tpg4850.frugalar.scanner.QRScanner;

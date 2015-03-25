@@ -1,7 +1,6 @@
 package no.ntnu.tpg4850.frugalar.scanner;
 
 import android.graphics.Point;
-
 import java.util.Date;
 
 /**
