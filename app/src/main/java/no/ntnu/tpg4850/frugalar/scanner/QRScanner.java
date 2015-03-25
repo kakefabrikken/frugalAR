@@ -25,6 +25,10 @@ public class QRScanner {
         setupScanner();
     }
 
+    /**
+     * Sets up a scanner using the zbar libary. The scanner is configured to look for
+     * formats defined in BarcodeFormat.ALL_FORMATS
+     */
     private void setupScanner() {
         mScanner = new ImageScanner();
         mScanner.setConfig(0, Config.X_DENSITY, 3);
@@ -36,7 +40,14 @@ public class QRScanner {
         }
     }
 
-
+    /**
+     * scanImage, use the zbar scanner to extract qr bounds and content from the image. QRCode objects
+     * are made from bounds, date and content of found qr codes, and then stored in QRStorage.
+     * @param data - Image data
+     * @param width - Width of image
+     * @param height - Height of image
+     * @return ArrayList of found QRCodes in the image.
+     */
     public ArrayList<QRCode> scanImage(byte[] data, int width, int height) {
         Image barcode = new Image(width, height, "Y800");
         barcode.setData(data);
@@ -51,9 +62,7 @@ public class QRScanner {
                 Log.i(TAG, this.storage.size()+ "");
                 this.storage.Store(q);
                 detectedList.add(q);
-
                 //TODO: async storage update every so and so ms
-
             }
         }
         return detectedList;

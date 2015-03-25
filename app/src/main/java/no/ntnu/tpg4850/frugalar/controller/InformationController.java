@@ -3,9 +3,6 @@ package no.ntnu.tpg4850.frugalar.controller;
 import android.hardware.Camera;
 import android.util.Log;
 
-import com.google.vrtoolkit.cardboard.CardboardActivity;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import no.ntnu.tpg4850.frugalar.CardboardOverlayView;
@@ -40,7 +37,6 @@ public class InformationController implements Camera.PreviewCallback {
         On previewFrame is called each time a new preview frame is available from the camera.
         The preview frame is feed to the qr scanner and the resulting qr codes.
          */
-        Log.i("MainActivity", "ONPREVIEW FRAME");
         Camera.Parameters parameters = camera.getParameters();
         Camera.Size size = parameters.getPreviewSize();
         ArrayList<QRCode> QRInFocus = scanner.scanImage(data, size.width, size.height); //QR codes found for this specific image
