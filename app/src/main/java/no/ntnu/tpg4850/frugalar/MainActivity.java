@@ -64,7 +64,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         try {
 
             myCamera.setPreviewTexture(surface);
-            myCamera.setPreviewCallback(this.controller);
+            myCamera.setPreviewCallback(controller);
             myCamera.startPreview();
             this.controller.setCamera(myCamera);
         }
@@ -80,6 +80,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "Oncreate");
         super.onCreate(savedInstanceState);
 
         this.cameraPreviewTransformer = new CameraEyeTransformer();
@@ -88,8 +89,6 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         cardboardView.setRenderer(this);
         setCardboardView(cardboardView);
 
-        //mCamera = new float[16];
-        //mView = new float[16];
         mOverlayView = (CardboardOverlayView) findViewById(R.id.overlay);
         mOverlayView.show3DToast("FrugalAR");
         this.controller = new InformationController(this.mOverlayView);
@@ -98,6 +97,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
 
     @Override
     public void onPause() {
+        Log.i(TAG, "onPause");
         super.onPause();
 
         // Release the Camera because we don't need it when paused
@@ -106,8 +106,10 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     }
 
     private void releaseCamera() {
+        Log.i(TAG, "RELEASE");
         if (myCamera != null) {
             myCamera.stopPreview();
+            myCamera.setPreviewCallback(null);
             myCamera.release();
             myCamera = null;
         }
@@ -143,6 +145,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
      */
     @Override
     public void onNewFrame(HeadTransform headTransform) {
+        Log.i(TAG, "NEW FRAME");
         float[] mtx = new float[16];
         cameraPreviewTransformer.clearGL();
         surface.updateTexImage();
@@ -151,6 +154,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
 
     @Override
     public void onFrameAvailable(SurfaceTexture arg0) {
+        Log.i(TAG, "ONFRAMEAVAILABLE");
         this.cardboardView.requestRender();
     }
 
@@ -161,6 +165,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
      */
     @Override
     public void onDrawEye(EyeTransform transform) {
+        Log.i(TAG, "DRAW EYE");
         cameraPreviewTransformer.drawEye(texture);
         //Matrix.multiplyMM(mView, 0, transform.getEyeView(), 0, mCamera, 0);
     }

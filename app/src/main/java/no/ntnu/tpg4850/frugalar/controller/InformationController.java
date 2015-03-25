@@ -35,12 +35,19 @@ public class InformationController implements Camera.PreviewCallback {
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
+        Log.i("MainActivity", "ONPREVIEW FRAME");
         Camera.Parameters parameters = camera.getParameters();
         Camera.Size size = parameters.getPreviewSize();
         ArrayList<QRCode> l = scanner.scanImage(data, size.width, size.height);
-        Log.i(TAG, l.size() + "");
         this.storage.updateAll();
+        String s = "";
+        for(QRCode qr: l) {
+            s += qr.id + " ";
+        }
 
+        this.view.show3DToast(s);
     }
+
+
 
 }
