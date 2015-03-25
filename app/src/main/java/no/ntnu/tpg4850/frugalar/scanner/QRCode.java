@@ -10,7 +10,7 @@ import java.util.Date;
 public class QRCode {
     public String id;
     public Date previouslySeen;
-    private int[] bounds;
+    public int[] bounds;
 
     public QRCode(String id, int[] bounds) {
         this.id = id;

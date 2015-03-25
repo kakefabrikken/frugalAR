@@ -10,6 +10,8 @@ import net.sourceforge.zbar.ImageScanner;
 import net.sourceforge.zbar.Symbol;
 import net.sourceforge.zbar.SymbolSet;
 
+import java.util.ArrayList;
+
 import no.ntnu.tpg4850.frugalar.CardboardOverlayView;
 
 public class QRScanner implements Camera.PreviewCallback {
@@ -17,7 +19,6 @@ public class QRScanner implements Camera.PreviewCallback {
     private static final String TAG = "QRScanner";
 
     private ImageScanner mScanner;
-    private CardboardOverlayView mOverlayView;
     private Camera mCamera;
     private QRStorage storage;
     //TODO: Interpolation between detections, and trail off behavior. IE. QR object with bounds and
@@ -25,9 +26,8 @@ public class QRScanner implements Camera.PreviewCallback {
     private int[] qrCodeBounds = null;
     private String qrId = null;
 
-    public QRScanner(CardboardOverlayView mOverlayView) {
-        this.mOverlayView = mOverlayView; //TODO: TEMP WAY of showing data in text hud
-        storage = new QRStorage(10, 1000);
+    public QRScanner(QRStorage storage) {
+        this.storage = storage;
         setupScanner();
     }
 
@@ -47,7 +47,28 @@ public class QRScanner implements Camera.PreviewCallback {
     }
 
 
+    public ArrayList<QRCode> scanImage(byte[] data, int width, int height) {
+        Image barcode = new Image(width, height, "Y800");
+        barcode.setData(data);
+        ArrayList<QRCode> detectedList = new ArrayList<QRCode>();
+        int result = mScanner.scanImage(barcode);
+        if (result != 0) {
+            SymbolSet syms = mScanner.getResults();
+            Log.i(TAG, syms.toString());
+            for (Symbol sym : syms) {
+                Log.i(TAG, "barcode result " + sym.getData());
+                QRCode q = new QRCode(sym.getData(), sym.getBounds());
+                Log.i(TAG, this.storage.size()+ "");
+                this.storage.Store(q);
+                detectedList.add(q);
 
+                //TODO: async storage update every so and so ms
+
+            }
+        }
+        //TODO: return new qrcodes
+        return detectedList;
+    }
 
 
     @Override
@@ -61,7 +82,6 @@ public class QRScanner implements Camera.PreviewCallback {
 
         int result = mScanner.scanImage(barcode);
         if (result != 0) {
-            mOverlayView.show3DToast("QR");
             SymbolSet syms = mScanner.getResults();
             Log.i(TAG, syms.toString());
             for (Symbol sym : syms) {

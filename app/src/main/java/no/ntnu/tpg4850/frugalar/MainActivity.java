@@ -25,6 +25,8 @@ import com.google.vrtoolkit.cardboard.*;
 import javax.microedition.khronos.egl.EGLConfig;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import no.ntnu.tpg4850.frugalar.controller.InformationController;
 import no.ntnu.tpg4850.frugalar.scanner.QRScanner;
 
 
@@ -45,6 +47,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     //private float[] mCamera;
     private CameraEyeTransformer cameraPreviewTransformer;
     private QRScanner qr;
+    private InformationController controller;
 
 
     public void startCamera(int texture) {
@@ -61,9 +64,9 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         try {
 
             myCamera.setPreviewTexture(surface);
-            myCamera.setPreviewCallback(this.qr);
+            myCamera.setPreviewCallback(this.controller);
             myCamera.startPreview();
-            this.qr.setCamera(myCamera);
+            this.controller.setCamera(myCamera);
         }
         catch (IOException ioe) {
             Log.w("MainActivity","CAMERA LAUNCH FAILED");
@@ -89,7 +92,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         //mView = new float[16];
         mOverlayView = (CardboardOverlayView) findViewById(R.id.overlay);
         mOverlayView.show3DToast("FrugalAR");
-        qr = new QRScanner(this.mOverlayView);
+        this.controller = new InformationController(this.mOverlayView);
 
     }
 
