@@ -60,6 +60,10 @@ public class QRStorage {
         return false;
     }
 
+    public ArrayList<QRCode> getAll() {
+        return this.storage;
+    }
+
     private static int getIndexOfId(ArrayList<QRCode> list, String id) {
         for(int i = 0; i<list.size(); i++) {
             if(list.get(i).id.equals(id)) {
