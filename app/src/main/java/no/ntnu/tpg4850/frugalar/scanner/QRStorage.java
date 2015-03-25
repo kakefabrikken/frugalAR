@@ -1,5 +1,7 @@
 package no.ntnu.tpg4850.frugalar.scanner;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -15,7 +17,7 @@ public class QRStorage {
     }
 
     public boolean Store(QRCode code) {
-        boolean isNew = QRStorage.containsId(this.storage, code.id);
+        boolean isNew = !QRStorage.containsId(this.storage, code.id);
         if(isNew) {
             storage.add(code);
         }
@@ -27,7 +29,11 @@ public class QRStorage {
         return isNew;
     }
 
-    public QRCode get(int id) {
+    public int size() {
+        return this.storage.size();
+    }
+
+    public QRCode get(String id) {
         int idx = QRStorage.getIndexOfId(this.storage, id);
         if(idx>-1) {
             return this.storage.get(idx);
@@ -36,7 +42,7 @@ public class QRStorage {
     }
 
     public void updateAll() {
-        //TODO: Should probabily be done async.
+        //TODO: Should probably be done async.
         long now = (new Date()).getTime();
         for(int i = 0; i<this.storage.size(); i++) {
             long diff = now - this.storage.get(i).previouslySeen.getTime();
@@ -45,18 +51,18 @@ public class QRStorage {
             }
         }
     }
-    private static boolean containsId(ArrayList<QRCode> list, int id) {
+    private static boolean containsId(ArrayList<QRCode> list, String id) {
         for(QRCode c: list) {
-            if (c.id == id) {
+            if (c.id.equals(id)) {
                 return true;
             }
         }
         return false;
     }
 
-    private static int getIndexOfId(ArrayList<QRCode> list, int id) {
+    private static int getIndexOfId(ArrayList<QRCode> list, String id) {
         for(int i = 0; i<list.size(); i++) {
-            if(list.get(i).id == id) {
+            if(list.get(i).id.equals(id)) {
                 return i;
             }
         }
