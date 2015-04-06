@@ -17,7 +17,10 @@
 package no.ntnu.tpg4850.frugalar;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -70,16 +73,28 @@ public class CardboardOverlayView extends LinearLayout {
     public void drawPoint() {
 
         mLeftView.imageView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        //mLeftView.imageView.setBackgroundResource(R.drawable.red_dot5);
+
+        mLeftView.imageView.setBackgroundResource(R.drawable.green_line);
         //mLeftView.imageView.setImageResource(R.drawable.red_dot5);
-        mLeftView.imageView.setImageDrawable( makePoint() );
-        //mLeftView.imageView.setAdjustViewBounds(true);
+        //mLeftView.imageView.setImageDrawable(makePoint());
+        mLeftView.imageView.setAdjustViewBounds(true);
 
         mRightView.imageView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        //mRightView.imageView.setBackgroundResource(R.drawable.red_dot5);
+
+        mRightView.imageView.setBackgroundResource(R.drawable.green_line);
         //mRightView.imageView.setImageResource(R.drawable.red_dot5);
-        mRightView.imageView.setImageDrawable( makePoint() );
-        //mRightView.imageView.setAdjustViewBounds(true);
+        //mRightView.imageView.setImageDrawable(makePoint());
+        mRightView.imageView.setAdjustViewBounds(true);
+    }
+
+    private void bitmapSetAll(Bitmap bm) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                bm.setPixel(j,i, 0xff8a0707);
+            }
+        }
     }
 
     private Drawable makePoint() {
@@ -91,7 +106,7 @@ public class CardboardOverlayView extends LinearLayout {
 
         ShapeDrawable point = new ShapeDrawable(new OvalShape());
         point.getPaint().setColor(0xff8a0707); // bloodred
-        point.setBounds(x ,y ,x + width ,y + height);
+        point.setBounds(x, y, x + width, y + height);
         return point;
     }
 
