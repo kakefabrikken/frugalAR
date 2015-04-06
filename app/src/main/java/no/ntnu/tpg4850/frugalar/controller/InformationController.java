@@ -39,7 +39,7 @@ public class InformationController implements Camera.PreviewCallback {
         ArrayList<QRCode> QRInFocus = scanner.scanImage(data, size.width, size.height); //QR codes found for this specific image
         this.storage.updateAll();
         ArrayList<QRCode> recentQRCodes = this.storage.getAll();
-
+        this.view.setCurrentQrData(recentQRCodes);
         String s = "";
         for(QRCode qr: recentQRCodes) {
             s += qr.id + " ";
