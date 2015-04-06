@@ -19,6 +19,9 @@ package no.ntnu.tpg4850.frugalar;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -62,6 +65,34 @@ public class CardboardOverlayView extends LinearLayout {
 
         mTextFadeAnimation = new AlphaAnimation(1.0f, 0.0f);
         mTextFadeAnimation.setDuration(5000);
+    }
+
+    public void drawPoint() {
+
+        mLeftView.imageView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        //mLeftView.imageView.setBackgroundResource(R.drawable.red_dot5);
+        //mLeftView.imageView.setImageResource(R.drawable.red_dot5);
+        mLeftView.imageView.setImageDrawable( makePoint() );
+        //mLeftView.imageView.setAdjustViewBounds(true);
+
+        mRightView.imageView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        //mRightView.imageView.setBackgroundResource(R.drawable.red_dot5);
+        //mRightView.imageView.setImageResource(R.drawable.red_dot5);
+        mRightView.imageView.setImageDrawable( makePoint() );
+        //mRightView.imageView.setAdjustViewBounds(true);
+    }
+
+    private Drawable makePoint() {
+
+        int x = 10;
+        int y = 10;
+        int width = 300;
+        int height = 300;
+
+        ShapeDrawable point = new ShapeDrawable(new OvalShape());
+        point.getPaint().setColor(0xff8a0707); // bloodred
+        point.setBounds(x ,y ,x + width ,y + height);
+        return point;
     }
 
     public void show3DToast(String message) {

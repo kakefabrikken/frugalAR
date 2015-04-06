@@ -93,6 +93,10 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         mOverlayView.show3DToast("FrugalAR");
         this.controller = new InformationController(this.mOverlayView);
 
+        mOverlayView.drawPoint();
+
+
+
     }
 
     @Override
