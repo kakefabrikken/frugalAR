@@ -35,7 +35,7 @@ import no.ntnu.tpg4850.frugalar.scanner.QRScanner;
  */
 public class MainActivity extends CardboardActivity implements CardboardView.StereoRenderer, OnFrameAvailableListener {
 
-    private static final String TAG = "MainActivity";
+    public static final String TAG = "MainActivity";
 
     private Camera myCamera = null;
     private ByteBuffer indexBuffer;    // Buffer for index-array

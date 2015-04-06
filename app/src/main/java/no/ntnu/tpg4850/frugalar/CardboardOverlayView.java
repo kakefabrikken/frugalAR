@@ -20,6 +20,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -29,6 +30,10 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+
+import no.ntnu.tpg4850.frugalar.scanner.QRCode;
 
 /**
  * Contains two sub-views to provide a simple stereo HUD.
@@ -62,6 +67,12 @@ public class CardboardOverlayView extends LinearLayout {
 
         mTextFadeAnimation = new AlphaAnimation(1.0f, 0.0f);
         mTextFadeAnimation.setDuration(5000);
+    }
+
+    public void setCurrentQrData(ArrayList<QRCode> codes) {
+        Log.i("QRTEST", "QR_STUFF" + codes.size());
+        this.mLeftView.setCurrentQrData(codes);
+        this.mRightView.setCurrentQrData(codes);
     }
 
     public void show3DToast(String message) {
@@ -110,10 +121,15 @@ public class CardboardOverlayView extends LinearLayout {
     private class CardboardOverlayEyeView extends ViewGroup {
         private final ImageView imageView;
         private final TextView textView;
+        private GraphicsView graphicsView;
         private float offset;
 
         public CardboardOverlayEyeView(Context context, AttributeSet attrs) {
             super(context, attrs);
+
+            graphicsView = new GraphicsView(context, attrs);
+            addView(graphicsView);
+
             imageView = new ImageView(context, attrs);
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setAdjustViewBounds(true);  // Preserve aspect ratio.
@@ -125,6 +141,10 @@ public class CardboardOverlayView extends LinearLayout {
             textView.setGravity(Gravity.CENTER);
             textView.setShadowLayer(3.0f, 0.0f, 0.0f, Color.DKGRAY);
             addView(textView);
+        }
+
+        public void setCurrentQrData(ArrayList<QRCode> codes) {
+            this.graphicsView.data = codes;
         }
 
         public void setColor(int color) {
@@ -176,6 +196,13 @@ public class CardboardOverlayView extends LinearLayout {
             textView.layout(
                     (int) leftMargin, (int) topMargin,
                     (int) (leftMargin + width), (int) (topMargin + height * (1.0f - verticalTextPos)));
+
+            //TODO: Only graphics on one eye, using the arguments below.
+            graphicsView.setViewMargin(leftMargin);
+            graphicsView.layout(
+                    (int) leftMargin, (int) top,
+                    (int) (leftMargin + width), bottom);
+
         }
     }
 }

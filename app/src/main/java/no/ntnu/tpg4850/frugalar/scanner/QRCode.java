@@ -17,8 +17,8 @@ public class QRCode {
         this.previouslySeen = new Date();
     }
 
-    public Point getMidpoint(int id) {
-        //TODO: Only 1 qr code can be kept so id irrelevant. Use 0 as value.
+    public Point getMidpoint() {
+
         int[] v = this.bounds;
         if(v != null && v.length>=3) {
             Point p = new Point((v[0]+v[2])/2, (v[1]+v[3])/2);
@@ -26,11 +26,11 @@ public class QRCode {
         }
         return null;
     }
-    public int[] getBoundsRect(int id) {
+    public int[] getBoundsRect() {
         return this.bounds;
     }
 
-    public Point[] getBounds(int id) {
+    public Point[] getBounds() {
         int[] v = this.bounds;
         int corners = 4;
         Point[] p = new Point[corners];
