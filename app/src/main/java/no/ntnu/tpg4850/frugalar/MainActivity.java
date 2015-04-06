@@ -25,6 +25,8 @@ import com.google.vrtoolkit.cardboard.*;
 import javax.microedition.khronos.egl.EGLConfig;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import no.ntnu.tpg4850.frugalar.controller.InformationController;
 import no.ntnu.tpg4850.frugalar.scanner.QRScanner;
 
 
@@ -45,6 +47,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     //private float[] mCamera;
     private CameraEyeTransformer cameraPreviewTransformer;
     private QRScanner qr;
+    private InformationController controller;
 
 
     public void startCamera(int texture) {
@@ -61,9 +64,9 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         try {
 
             myCamera.setPreviewTexture(surface);
-            myCamera.setPreviewCallback(this.qr);
+            myCamera.setPreviewCallback(controller);
             myCamera.startPreview();
-            this.qr.setCamera(myCamera);
+            this.controller.setCamera(myCamera);
         }
         catch (IOException ioe) {
             Log.w("MainActivity","CAMERA LAUNCH FAILED");
@@ -77,6 +80,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "Oncreate");
         super.onCreate(savedInstanceState);
 
         this.cameraPreviewTransformer = new CameraEyeTransformer();
@@ -85,16 +89,15 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
         cardboardView.setRenderer(this);
         setCardboardView(cardboardView);
 
-        //mCamera = new float[16];
-        //mView = new float[16];
         mOverlayView = (CardboardOverlayView) findViewById(R.id.overlay);
         mOverlayView.show3DToast("FrugalAR");
-        qr = new QRScanner(this.mOverlayView);
+        this.controller = new InformationController(this.mOverlayView);
 
     }
 
     @Override
     public void onPause() {
+        Log.i(TAG, "onPause");
         super.onPause();
 
         // Release the Camera because we don't need it when paused
@@ -103,8 +106,10 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     }
 
     private void releaseCamera() {
+        Log.i(TAG, "RELEASE");
         if (myCamera != null) {
             myCamera.stopPreview();
+            myCamera.setPreviewCallback(null);
             myCamera.release();
             myCamera = null;
         }
@@ -140,6 +145,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
      */
     @Override
     public void onNewFrame(HeadTransform headTransform) {
+        Log.i(TAG, "NEW FRAME");
         float[] mtx = new float[16];
         cameraPreviewTransformer.clearGL();
         surface.updateTexImage();
@@ -148,6 +154,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
 
     @Override
     public void onFrameAvailable(SurfaceTexture arg0) {
+        Log.i(TAG, "ONFRAMEAVAILABLE");
         this.cardboardView.requestRender();
     }
 
@@ -158,6 +165,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
      */
     @Override
     public void onDrawEye(EyeTransform transform) {
+        Log.i(TAG, "DRAW EYE");
         cameraPreviewTransformer.drawEye(texture);
         //Matrix.multiplyMM(mView, 0, transform.getEyeView(), 0, mCamera, 0);
     }
