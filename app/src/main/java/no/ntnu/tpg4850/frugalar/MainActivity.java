@@ -177,7 +177,7 @@ public class MainActivity extends CardboardActivity implements CardboardView.Ste
     @Override
     public void onCardboardTrigger() {
         //When magnetic button has been triggered
-        Log.i(TAG, "onCardboardTrigger");
+        Log.i("Trigger", "onCardboardTrigger");
         controller.trigger();
     }
 }

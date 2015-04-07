@@ -2,6 +2,8 @@ package no.ntnu.tpg4850.frugalar.controller;
 
 import android.graphics.Point;
 import android.hardware.Camera;
+import android.util.Log;
+
 import java.util.ArrayList;
 import no.ntnu.tpg4850.frugalar.CardboardOverlayView;
 import no.ntnu.tpg4850.frugalar.scanner.QRCode;
@@ -53,15 +55,53 @@ public class InformationController implements Camera.PreviewCallback {
     }
 
     public void trigger() {
-        if (qrInFocus) {
-            this.view.show3DToast("WE HAS DA QR");
+        QRCode selected = null;
+        int[] reticuleBounds = view.getGraphicsviewDimensions();
+        int width = reticuleBounds[0];
+        int height = reticuleBounds[1];
+
+        Point midPoint = new Point(width, height);
+        Double leastDistance = -1.0;
+        if (storage.getAll().size() > 0) {
+            for (QRCode qr : storage.getAll()) {
+                Double dist = getDistanceToQR(midPoint, qr);
+                if (dist < leastDistance && dist > -1.0) {
+                    leastDistance = dist;
+                    selected = qr;
+                }
+
+            }
         }
-        //else if (qrTextShown) {
+        else {
+            view.show3DToast("Storage empty. No QR code detected");
+        }
 
-        //}
-
+        if (selected != null) {
+            view.show3DToast(selected.toString());
+        }
     }
 
+    private Double getDistanceToQR(Point aim, QRCode qr) {
+        /*
+            bounds are received counter clock-wise
+            4---3
+            |   |
+            |   |
+            1---2
+        */
 
+        //Point[] bounds = qr.getBounds();
+        int aimX = aim.x;
+        int aimY = aim.y;
+
+        Point qrMidPoint = qr.getMidpoint();
+        int qrX = qrMidPoint.x;
+        int qrY = qrMidPoint.y;
+
+        Double xdelta = (double)(qrX - aimX);
+        Double ydelta = (double)(qrY - aimY);
+
+        return Math.sqrt( Math.pow(xdelta,2) + Math.pow(ydelta,2 ) );
+    }
 
 }

@@ -96,7 +96,7 @@ public class GraphicsView extends View {
     public void onDraw(Canvas canvas) {
         drawReticule(canvas);
         //canvas.drawColor(Color.BLUE);
-        int w = this.getWidth();
+        //int w = this.getWidth();
 
         if(this.data != null) {
             for(QRCode c: this.data) {
