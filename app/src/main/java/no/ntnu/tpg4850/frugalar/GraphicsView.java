@@ -54,31 +54,31 @@ public class GraphicsView extends View {
         // thereby building the reticule
 
         //first horizontal line
-        float h1_x_0 = (float)(w/2.0f * 0.85);
+        float h1_x_0 = (float)(w/2.0f * startOffset_Lower);
         float h1_y_0 = (float)(h/2.0f);
-        float h1_x_1 = (float)(w/2.0f * 0.9);
+        float h1_x_1 = (float)(w/2.0f * endOffset_Lower);
         float h1_y_1 = (float)(h/2.0f);
         float[] first_horizontal = {h1_x_0,h1_y_0, h1_x_1,h1_y_1};
 
         //second horizontal line
-        float h2_x_0 = (float)(w/2.0f * 1.1);
+        float h2_x_0 = (float)(w/2.0f * startOffset_Higher);
         float h2_y_0 = (float)(h/2.0f);
-        float h2_x_1 = (float)(w/2.0f * 1.15);
+        float h2_x_1 = (float)(w/2.0f * endOffset_Higher);
         float h2_y_1 = (float)(h/2.0f);
         float[] second_horizontal = {h2_x_0,h2_y_0, h2_x_1,h2_y_1};
 
         //first vertical line
         float h3_x_0 = (float)(w/2.0f);
-        float h3_y_0 = (float)(h/2.0f * 0.85);
+        float h3_y_0 = (float)(h/2.0f * startOffset_Lower);
         float h3_x_1 = (float)(w/2.0f);
-        float h3_y_1 = (float)(h/2.0f * 0.9);
+        float h3_y_1 = (float)(h/2.0f * endOffset_Lower);
         float[] first_vertical = {h3_x_0,h3_y_0, h3_x_1,h3_y_1};
 
         //second vertical line
         float h4_x_0 = (float)(w/2.0f);
-        float h4_y_0 = (float)(h/2.0f * 1.1);
+        float h4_y_0 = (float)(h/2.0f * startOffset_Higher);
         float h4_x_1 = (float)(w/2.0f);
-        float h4_y_1 = (float)(h/2.0f * 1.15);
+        float h4_y_1 = (float)(h/2.0f * endOffset_Higher);
         float[] second_vertical = {h4_x_0,h4_y_0, h4_x_1,h4_y_1};
 
         //lines, clock-wise from left horizontal arrow

@@ -1,5 +1,6 @@
 package no.ntnu.tpg4850.frugalar.controller;
 
+import android.graphics.Point;
 import android.hardware.Camera;
 import java.util.ArrayList;
 import no.ntnu.tpg4850.frugalar.CardboardOverlayView;
@@ -17,6 +18,9 @@ public class InformationController implements Camera.PreviewCallback {
     private QRStorage storage;
     private QRScanner scanner;
     private CardboardOverlayView view;
+    private boolean qrInFocus;
+    private Point[] qrFocusBounds;
+    private boolean qrTextShown;
 
     public InformationController(CardboardOverlayView mOverlayView) {
         this.view = mOverlayView;
@@ -46,6 +50,16 @@ public class InformationController implements Camera.PreviewCallback {
         }
 
         this.view.show3DToast(s);
+    }
+
+    public void trigger() {
+        if (qrInFocus) {
+            this.view.show3DToast("WE HAS DA QR");
+        }
+        //else if (qrTextShown) {
+
+        //}
+
     }
 
 
