@@ -40,7 +40,7 @@ public class GraphicsView extends View {
                 paint.setColor(Color.RED);
                 Point[] rect = c.getBounds();
                 for (Point p: rect) {
-                    canvas.drawCircle(p.x*0.75f,p.y, 15, paint);
+                    canvas.drawCircle(this.viewMargin + p.x*0.5f,p.y, 15, paint);
 
                 }
                 //canvas.drawCircle(center.x,center.y, 10, paint);

@@ -1,6 +1,7 @@
 package no.ntnu.tpg4850.frugalar.network;
 
 import android.os.Looper;
+import android.util.JsonReader;
 import android.util.Log;
 
 import org.apache.http.HttpResponse;
@@ -10,13 +11,16 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.json.JSONObject;
 
+import java.io.IOError;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Created by Olav on 25.03.2015.
  */
 public class ValveService {
-    public final static String URL = ".../valve";
+    public final static String BASE_URL = "http://private-b1522-frugular.apiary-mock.com";
     public void get(final String id) {
         Thread t = new Thread() {
 
@@ -27,9 +31,10 @@ public class ValveService {
                 HttpResponse response;
                 JSONObject json = new JSONObject();
 
-                try {
-                    HttpGet get = new HttpGet(URL);
 
+                try {
+                    HttpGet get = new HttpGet(BASE_URL + "/valve/" + id);
+                    Log.i("ValveMessage", "Sent request to" + BASE_URL + "/valve/" + id );
                     //StringEntity se = new StringEntity( json.toString());
                     //se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
                     //post.setEntity(se);
@@ -39,11 +44,20 @@ public class ValveService {
                     if(response!=null){
 
                         InputStream in = response.getEntity().getContent(); //Get the data in the entity
+                        JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+                        try {
+                            Valve m = createValve(reader);
+                            Log.i("ValveMessage", response.toString());
+                        }
+                        finally {
+                            reader.close();
+                        }
                         Log.i("ValveMessage", response.toString());
                     }
 
                 } catch(Exception e) {
                     e.printStackTrace();
+                    Log.i("ValveMessage", "Cannot establish connection");
                     //createDialog("Error", "Cannot Estabilish Connection");
                 }
 
@@ -52,5 +66,26 @@ public class ValveService {
         };
 
         t.start();
+
+
+    }
+
+    private Valve createValve(JsonReader reader) throws IOException {
+        Valve v = new Valve();
+        reader.beginObject();
+        while(reader.hasNext()) {
+            String name = reader.nextName();
+            if (name.equals("id")) {
+                v.id = reader.nextString();
+            }
+            else if(name.equals("stuff")) {
+                v.text = reader.nextString();
+            }
+            else {
+                reader.skipValue();
+            }
+        }
+        reader.endObject();
+        return v;
     }
 }

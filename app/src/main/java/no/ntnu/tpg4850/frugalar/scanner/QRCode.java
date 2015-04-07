@@ -10,6 +10,7 @@ public class QRCode {
     public String id;
     public Date previouslySeen;
     public int[] bounds;
+    public boolean test = false;
 
     public QRCode(String id, int[] bounds) {
         this.id = id;
