@@ -15,6 +15,8 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Date;
 
 import no.ntnu.tpg4850.frugalar.scanner.QRCode;
 
@@ -72,7 +74,16 @@ public class ValveService {
 
     }
 
+    /**
+     * createValve takes a json recieved from the valve endpoint and unmarshall the json
+     * object to a java object. The method is custom for the valve endpoint. Could be replaced by
+     * a json libary to achieve cleaner code.
+     * @param reader
+     * @return Valve object
+     * @throws IOException
+     */
     private Valve createValve(JsonReader reader) throws IOException {
+
         Valve v = new Valve();
         reader.beginObject();
         while(reader.hasNext()) {
@@ -80,8 +91,72 @@ public class ValveService {
             if (name.equals("id")) {
                 v.id = reader.nextInt() + "";
             }
-            else if(name.equals("title")) {
-                v.text = reader.nextString();
+            else if(name.equals("status")) {
+                v.status = reader.nextString();
+            }
+            else if(name.equals("history")) {
+                reader.beginArray();
+                ArrayList<Message> history = new ArrayList<Message>();
+
+                while(reader.hasNext()) {
+                    String innerName = reader.nextName();
+                    Message m = new Message();
+                    reader.beginObject();
+                    while(reader.hasNext()) {
+                        if (innerName.equals("date")) {
+                            m.date = new Date(reader.nextString());
+                        }
+                        else if (innerName.equals("message")) {
+                            m.message = reader.nextString();
+                        }
+                        else {
+                            reader.skipValue();
+                        }
+                    }
+                    reader.endObject();
+                    history.add(m);
+                }
+                reader.endArray();
+                v.history = history;
+            }
+            else if(name.equals("status")) {
+                v.status = reader.nextString();
+            }
+            else if(name.equals("installed")) {
+                v.installed = new Date(reader.nextString());
+            }
+            else if(name.equals("work_permission")) {
+                v.workPermission = reader.nextBoolean();
+            }
+            else if(name.equals("work_permission_info")) {
+                v.workPermissionInfo = reader.nextString();
+            }
+            else if(name.equals("valve_state")) {
+                v.valveStatus = reader.nextDouble();
+            }
+            else if(name.equals("type")) {
+                v.type = reader.nextString();
+            }
+            else if(name.equals("turns_open")) {
+                v.turnsToOpen = reader.nextInt();
+            }
+            else if(name.equals("turns_closed")) {
+                v.turnsToClosed = reader.nextInt();
+            }
+            else if(name.equals("turns_closed")) {
+                v.turnsToClosed = reader.nextInt();
+            }
+            else if(name.equals("temperature")) {
+                v.temperature = reader.nextDouble();
+            }
+            else if(name.equals("temperature_info")) {
+                v.temperatureInfo = reader.nextString();
+            }
+            else if(name.equals("flow")) {
+                v.flow = reader.nextString();
+            }
+            else if(name.equals("supplier")) {
+                v.supplier = reader.nextString();
             }
             else {
                 reader.skipValue();
