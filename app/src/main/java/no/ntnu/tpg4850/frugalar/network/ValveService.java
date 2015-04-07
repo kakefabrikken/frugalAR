@@ -16,12 +16,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import no.ntnu.tpg4850.frugalar.scanner.QRCode;
+
 /**
  * Created by Olav on 25.03.2015.
  */
 public class ValveService {
     public final static String BASE_URL = "http://private-b1522-frugular.apiary-mock.com";
-    public void get(final String id) {
+    public void get(final String id, final QRCode qrCode) {
         Thread t = new Thread() {
 
             public void run() {
@@ -46,8 +48,8 @@ public class ValveService {
                         InputStream in = response.getEntity().getContent(); //Get the data in the entity
                         JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
                         try {
-                            Valve m = createValve(reader);
-                            Log.i("ValveMessage", response.toString());
+                            Valve v = createValve(reader);
+                            qrCode.setValve(v);
                         }
                         finally {
                             reader.close();
@@ -58,12 +60,12 @@ public class ValveService {
                 } catch(Exception e) {
                     e.printStackTrace();
                     Log.i("ValveMessage", "Cannot establish connection");
-                    //createDialog("Error", "Cannot Estabilish Connection");
-                }
+        //createDialog("Error", "Cannot Estabilish Connection");
+    }
 
-                Looper.loop(); //Loop in the message queue
-            }
-        };
+    Looper.loop(); //Loop in the message queue
+}
+};
 
         t.start();
 
@@ -76,9 +78,9 @@ public class ValveService {
         while(reader.hasNext()) {
             String name = reader.nextName();
             if (name.equals("id")) {
-                v.id = reader.nextString();
+                v.id = reader.nextInt() + "";
             }
-            else if(name.equals("stuff")) {
+            else if(name.equals("title")) {
                 v.text = reader.nextString();
             }
             else {
