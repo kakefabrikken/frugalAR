@@ -112,6 +112,12 @@ public class CardboardOverlayView extends LinearLayout {
         mRightView.setColor(color);
     }
 
+    public int[] getGraphicsviewDimensions() {
+
+        int[] ret = {mLeftView.graphicsView.getWidth() , mLeftView.graphicsView.getHeight()};
+        return ret;
+    }
+
     /**
      * A simple view group containing some horizontally centered text underneath a horizontally
      * centered image.
@@ -146,6 +152,7 @@ public class CardboardOverlayView extends LinearLayout {
         public void setCurrentQrData(ArrayList<QRCode> codes) {
             this.graphicsView.data = codes;
         }
+
 
         public void setColor(int color) {
             imageView.setColorFilter(color);
