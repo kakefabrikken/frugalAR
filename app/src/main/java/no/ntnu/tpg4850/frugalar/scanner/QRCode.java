@@ -1,6 +1,8 @@
 package no.ntnu.tpg4850.frugalar.scanner;
 
 import android.graphics.Point;
+import android.graphics.Rect;
+
 import java.util.Date;
 
 /**
@@ -26,10 +28,18 @@ public class QRCode {
         }
         return null;
     }
-    public int[] getBoundsRect() {
+    public int[] getBoundsRaw() {
         return this.bounds;
     }
 
+    public Rect getBoundsRect() {
+        int[] v = this.bounds;
+        if(v != null && v.length>=3) {
+            Rect rectangle = new Rect(v[0], v[1], v[2], v[3]);
+            return rectangle;
+        }
+        return null;
+    }
     public Point[] getBounds() {
         int[] v = this.bounds;
         int corners = 4;

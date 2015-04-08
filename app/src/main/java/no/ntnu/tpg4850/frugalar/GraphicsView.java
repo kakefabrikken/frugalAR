@@ -37,13 +37,10 @@ public class GraphicsView extends View {
         int w = this.getWidth();
 
         if(this.data != null) {
-            for(QRCode c: this.data) {
+            for(QRCode q: this.data) {
                 paint.setColor(Color.RED);
-                Point[] rect = c.getBounds();
-                for (Point p: rect) {
-                    canvas.drawCircle(p.x*0.75f,p.y, 15, paint);
-
-                }
+                canvas.drawRect(q.getBoundsRect(), paint);
+                this.drawPanel(canvas, q);
                 //canvas.drawCircle(center.x,center.y, 10, paint);
             }
         }
@@ -52,11 +49,12 @@ public class GraphicsView extends View {
 
     public void drawPanel(Canvas c, QRCode q) {
         Point p = q.getMidpoint();
-        paint.setColor(Color.argb(150, 153,184,152));
+        paint.setColor(Color.argb(150, 42,54,59));
+        paint.setTextSize(20.0f);
         //TODO: Scaling?
-        int length = 200;
-        int height = 150;
-        int padding = 10;
+        int length = 400;
+        int height = 250;
+        int padding = 30;
         Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
         c.drawRect(panelBounds, paint);
 
