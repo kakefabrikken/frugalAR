@@ -61,12 +61,14 @@ public class InformationController implements Camera.PreviewCallback {
         int width = reticuleBounds[0];
         int height = reticuleBounds[1];
 
-        Point midPoint = new Point(width, height);
+        Point midPoint = new Point((int)(width/2.0), (int)(height/2.0));
         Double leastDistance = -1.0;
-        if (storage.getAll() == null) {//storage.getAll().size() > 0) {
+        if (storage.getAll() != null) {//storage.getAll().size() > 0) {
             Log.i("storage nonempty", "we have action");
             for (QRCode qr : storage.getAll()) {
+                Log.i("QR code" , "" + storage.getAll().size());
                 if (qrInFocus(qr, midPoint)) {
+                    Log.i("qrFocus", "KAAAAAAAAAAAAAAAAAAAAAAHN");
                     view.show3DToast("WE HAVE DA QR\n" + qr.toString());
                 }
                 /*Double dist = getDistanceToQR(midPoint, qr);
