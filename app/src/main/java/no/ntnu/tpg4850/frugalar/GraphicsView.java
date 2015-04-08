@@ -39,8 +39,10 @@ public class GraphicsView extends View {
         if(this.data != null) {
             for(QRCode q: this.data) {
                 paint.setColor(Color.RED);
-                canvas.drawRect(q.getBoundsRect(), paint);
-                this.drawPanel(canvas, q);
+                if(q.getBounds() != null) {
+                    canvas.drawRect(q.getBoundsRect(), paint);
+                    this.drawPanel(canvas, q);
+                }
                 //canvas.drawCircle(center.x,center.y, 10, paint);
             }
         }
