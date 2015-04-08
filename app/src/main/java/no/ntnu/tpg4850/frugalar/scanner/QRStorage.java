@@ -7,10 +7,11 @@ import java.util.Date;
  * Created by Olav on 18.03.2015.
  */
 public class QRStorage {
-    private ArrayList<QRCode> storage = new ArrayList<QRCode>();
+    private ArrayList<QRCode> storage;
     private int timeLimit = 1000;
 
     public QRStorage(int maxLim, int timeLimit) {
+        this.storage = new ArrayList<QRCode>();
         this.timeLimit = timeLimit;
     }
 

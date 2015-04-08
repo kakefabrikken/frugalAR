@@ -55,6 +55,7 @@ public class InformationController implements Camera.PreviewCallback {
     }
 
     public void trigger() {
+        Log.i("Entering trigger", "Now what");
         QRCode selected = null;
         int[] reticuleBounds = view.getGraphicsviewDimensions();
         int width = reticuleBounds[0];
@@ -62,17 +63,23 @@ public class InformationController implements Camera.PreviewCallback {
 
         Point midPoint = new Point(width, height);
         Double leastDistance = -1.0;
-        if (storage.getAll().size() > 0) {
+        if (storage.getAll() == null) {//storage.getAll().size() > 0) {
+            Log.i("storage nonempty", "we have action");
             for (QRCode qr : storage.getAll()) {
-                Double dist = getDistanceToQR(midPoint, qr);
+                if (qrInFocus(qr, midPoint)) {
+                    view.show3DToast("WE HAVE DA QR\n" + qr.toString());
+                }
+                /*Double dist = getDistanceToQR(midPoint, qr);
                 if (dist < leastDistance && dist > -1.0) {
                     leastDistance = dist;
                     selected = qr;
                 }
+                */
 
             }
         }
         else {
+            Log.i("storage empty", "no action");
             view.show3DToast("Storage empty. No QR code detected");
         }
 
@@ -81,14 +88,27 @@ public class InformationController implements Camera.PreviewCallback {
         }
     }
 
-    private Double getDistanceToQR(Point aim, QRCode qr) {
+    private boolean qrInFocus(QRCode qr , Point midpoint) {
         /*
             bounds are received counter clock-wise
-            4---3
-            |   |
-            |   |
-            1---2
+            4-----------3
+            |     .     |
+            | midpoint  |
+            1-----------2
         */
+        Point[] bounds = qr.getBounds();
+        Point p1 = bounds[0];
+        Point p3 = bounds[2];
+        if (p1.x <= midpoint.x && p1.y <= midpoint.y && p3.x >= midpoint.x && p3.y >= midpoint.y) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    private Double getDistanceToQR(Point aim, QRCode qr) {
+
 
         //Point[] bounds = qr.getBounds();
         int aimX = aim.x;
