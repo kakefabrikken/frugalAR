@@ -40,10 +40,15 @@ public class GraphicsView extends View {
                 paint.setColor(Color.RED);
                 Point[] rect = c.getBounds();
                 for (Point p: rect) {
-                    canvas.drawCircle(p.x*0.75f,p.y, 15, paint);
+                    canvas.drawCircle(this.viewMargin + p.x*0.5f,p.y, 15, paint);
 
                 }
-                //canvas.drawCircle(center.x,center.y, 10, paint);
+                paint.setColor(Color.BLACK);
+                Point mid = c.getMidpoint();
+                //TODO:Get real size and scale text according to distance. Faux 3D effect
+                paint.setTextSize(48f);
+                canvas.drawText(c.toDisplay(), mid.x, mid.y, paint);
+
             }
         }
         this.invalidate();
