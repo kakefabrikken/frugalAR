@@ -38,22 +38,30 @@ public class GraphicsView extends View {
 
         if(this.data != null) {
             for(QRCode q: this.data) {
-                paint.setColor(Color.RED);
-                if(q.getBounds() != null) {
-                    canvas.drawRect(q.getBoundsRect(), paint);
+                if(q.getBoundsRaw() != null) {
+                    this.drawQRBoundingBox(canvas, q);
+                    //TODO: Reticule integration
                     this.drawPanel(canvas, q);
                 }
                 paint.setColor(Color.BLACK);
-                Point mid = c.getMidpoint();
-                //TODO:Get real size and scale text according to distance. Faux 3D effect
+                Point mid = q.getMidpoint();
                 paint.setTextSize(48f);
-                canvas.drawText(c.toDisplay(), mid.x, mid.y, paint);
+                canvas.drawText(q.id, mid.x, mid.y, paint);
 
             }
         }
         this.invalidate();
     }
 
+    private void drawQRBoundingBox(Canvas c, QRCode q) {
+        int[] b = q.getBoundsRaw();
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(1.0f);
+        paint.setStyle(Paint.Style.STROKE);
+        Rect rectangle = new Rect((int)((b[0]*0.75)-this.viewMargin), b[1], (int)((b[0]+b[2])*0.75), b[1]+b[3]);
+        c.drawRect(rectangle, paint);
+        paint.setStyle(Paint.Style.FILL);
+    }
     public void drawPanel(Canvas c, QRCode q) {
         Point p = q.getMidpoint();
         paint.setColor(Color.argb(150, 42,54,59));

@@ -32,7 +32,7 @@ public class QRCode {
             //TODO: Handle errors. Show em?
             return "No data yet for valve #" + this.id;
         }
-        return this.valve.text;
+        return this.valve.status;
     }
     public Point getMidpoint() {
 
@@ -50,7 +50,7 @@ public class QRCode {
     public Rect getBoundsRect() {
         int[] v = this.bounds;
         if(v != null && v.length>=3) {
-            Rect rectangle = new Rect(v[0], v[1], v[2], v[3]);
+            Rect rectangle = new Rect(v[0], v[1], v[0]+v[2], v[1]+v[3]);
             return rectangle;
         }
         return null;
