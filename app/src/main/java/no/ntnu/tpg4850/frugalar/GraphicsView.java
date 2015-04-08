@@ -138,8 +138,8 @@ public class GraphicsView extends View {
         int length = 500;
         int height = 350;
         int padding = 20;
-        p.x = p.x -length/4;
-        p.y = p.y -height/4;
+        p.x = (int) (( p.x)*0.65);
+        p.y = (int) ((p.y));
         Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
         c.drawRect(panelBounds, paint);
 
@@ -149,17 +149,23 @@ public class GraphicsView extends View {
         }
         else {
             Valve v = q.getValve();
-            paint.setColor(Color.rgb(153,186,152));
+            if(!v.error) {
+                paint.setColor(Color.rgb(153,186,152));
+            }
+            else {
+                paint.setColor(Color.rgb(232,74,95));
+            }
             c.drawCircle(p.x+padding, p.y+padding, 10, paint);
             paint.setColor(Color.rgb(254,206,168));
             //TODO: Retrieve text from valve
-            c.drawText("Installed: " + df.format(v.installed) , p.x+(3*padding), p.y+padding, paint);
+            c.drawText(v.valveStatus + "% open", p.x+(2*padding), p.y+padding, paint);
+            //c.drawText("Installed: " + df.format(v.installed) , p.x+(3*padding), p.y+padding, paint);
             c.drawText(v.status, p.x + padding, p.y+(2*padding), paint);
             int MAX_HISTORY = 5;
             for(int i = 0; i<v.history.size() || i< MAX_HISTORY; i++) {
                 Date d = v.history.get(i).date;
-                c.drawText(dfwt.format(d), p.x + padding, p.y + (3*padding) + (i*padding), paint);
-                c.drawText(v.history.get(i).message, p.x + 4*padding, p.y + (3*padding) + (i*padding), paint);
+                c.drawText(dfwt.format(d), p.x + padding, p.y + (4*padding) + (i*padding), paint);
+                c.drawText(v.history.get(i).message, p.x + 220, p.y + (4*padding) + (i*padding), paint);
             }
         }
     }

@@ -51,7 +51,7 @@ public class ValveService {
 
                         InputStream in = response.getEntity().getContent(); //Get the data in the entity
                         reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
-
+                        reader.setLenient(true);
 
                         Log.i("ValveMessage", response.toString());
                     }
@@ -100,7 +100,6 @@ public class ValveService {
 
         Valve v = new Valve();
         reader.beginObject();
-        reader.setLenient(true);
         while(reader.hasNext()) {
             String name = reader.nextName();
             if (name.equals("id")) {
@@ -172,6 +171,9 @@ public class ValveService {
             }
             else if(name.equals("supplier")) {
                 v.supplier = reader.nextString();
+            }
+            else if(name.equals("error")) {
+                v.error = reader.nextBoolean();
             }
             else {
                 reader.skipValue();

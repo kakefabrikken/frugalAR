@@ -9,6 +9,7 @@ public class Valve {
     public boolean isCorrect;
     public ArrayList<Message> history = new ArrayList<Message>();
     public Date installed;
+    public boolean error;
     public boolean workPermission;
     public String workPermissionInfo;
     public boolean bypass;
