@@ -58,7 +58,7 @@ public class GraphicsView extends View {
         paint.setColor(Color.RED);
         paint.setStrokeWidth(1.0f);
         paint.setStyle(Paint.Style.STROKE);
-        Rect rectangle = new Rect((int)((b[0]*0.75)-this.viewMargin), b[1], (int)((b[0]+b[2])*0.75), b[1]+b[3]);
+        Rect rectangle = new Rect((int)((b[0]*0.65)-this.viewMargin), b[1], (int)((b[0]+b[2])*0.65), b[1]+b[3]);
         c.drawRect(rectangle, paint);
         paint.setStyle(Paint.Style.FILL);
     }
