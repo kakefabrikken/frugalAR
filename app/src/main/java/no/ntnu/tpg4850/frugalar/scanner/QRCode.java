@@ -30,7 +30,7 @@ public class QRCode {
             //TODO: Handle errors. Show em?
             return "No data yet for valve #" + this.id;
         }
-        return this.valve.text;
+        return this.valve.status;
     }
     public Point getMidpoint() {
 
