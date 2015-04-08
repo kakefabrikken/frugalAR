@@ -27,6 +27,17 @@ public class QRCode {
         this.valve = v;
     }
 
+    public boolean isData() {
+        if(this.valve != null) {
+            return true;
+        }
+        return false;
+    }
+
+    public Valve getValve() {
+        return this.valve;
+    }
+
     public String toDisplay() {
         if(this.valve == null) {
             //TODO: Handle errors. Show em?

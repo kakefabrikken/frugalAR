@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Date;
 
+import no.ntnu.tpg4850.frugalar.network.Valve;
 import no.ntnu.tpg4850.frugalar.scanner.QRCode;
 
 public class GraphicsView extends View {
@@ -136,12 +138,24 @@ public class GraphicsView extends View {
         Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
         c.drawRect(panelBounds, paint);
 
-        paint.setColor(Color.rgb(153,186,152));
-        c.drawCircle(p.x+padding, p.y+padding, 10, paint);
-        paint.setColor(Color.rgb(254,206,168));
-        //TODO: Retrieve text from valve
-        c.drawText("Updated: 13:07 07.04.15", p.x+(3*padding), p.y+padding, paint);
-        c.drawText("State: Installed 21.11.14", p.x + padding, p.y+(3*padding), paint);
+        if(!q.isData()) {
+            paint.setColor(Color.rgb(254,206,168));
+            c.drawText("Data not retrieved yet", p.x+ (length/2)-2*padding, p.y+ (height/2), paint);
+        }
+        else {
+            Valve v = q.getValve();
+            paint.setColor(Color.rgb(153,186,152));
+            c.drawCircle(p.x+padding, p.y+padding, 10, paint);
+            paint.setColor(Color.rgb(254,206,168));
+            //TODO: Retrieve text from valve
+            c.drawText("Installed: " + v.installed , p.x+(3*padding), p.y+padding, paint);
+            c.drawText("status:" + v.status, p.x + padding, p.y+(2*padding), paint);
+            int MAX_HISTORY = 5;
+            for(int i = 0; i<v.history.size() || i< MAX_HISTORY; i++) {
+                Date d = v.history.get(i).date;
+                c.drawText(d.toString(), p.x + padding, p.y + (2*padding) + (2*i*padding), paint);
+            }
+        }
     }
 }
 
