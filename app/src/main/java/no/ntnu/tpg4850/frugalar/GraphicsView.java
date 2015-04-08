@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -23,6 +24,8 @@ public class GraphicsView extends View {
     public ArrayList<QRCode> data;
     private float viewMargin = 0.0f;
     private int cameraWidth = 100;
+    SimpleDateFormat dfwt = new SimpleDateFormat("dd-mm-yy hh:mm:ss");
+    SimpleDateFormat df = new SimpleDateFormat("dd-mm-yyyy");
 
     public GraphicsView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -132,9 +135,11 @@ public class GraphicsView extends View {
         paint.setColor(Color.argb(150, 42,54,59));
         paint.setTextSize(20.0f);
         //TODO: Scaling?
-        int length = 400;
-        int height = 250;
-        int padding = 30;
+        int length = 500;
+        int height = 350;
+        int padding = 20;
+        p.x = p.x -length/4;
+        p.y = p.y -height/4;
         Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
         c.drawRect(panelBounds, paint);
 
@@ -148,12 +153,13 @@ public class GraphicsView extends View {
             c.drawCircle(p.x+padding, p.y+padding, 10, paint);
             paint.setColor(Color.rgb(254,206,168));
             //TODO: Retrieve text from valve
-            c.drawText("Installed: " + v.installed , p.x+(3*padding), p.y+padding, paint);
-            c.drawText("status:" + v.status, p.x + padding, p.y+(2*padding), paint);
+            c.drawText("Installed: " + df.format(v.installed) , p.x+(3*padding), p.y+padding, paint);
+            c.drawText(v.status, p.x + padding, p.y+(2*padding), paint);
             int MAX_HISTORY = 5;
             for(int i = 0; i<v.history.size() || i< MAX_HISTORY; i++) {
                 Date d = v.history.get(i).date;
-                c.drawText(d.toString(), p.x + padding, p.y + (2*padding) + (2*i*padding), paint);
+                c.drawText(dfwt.format(d), p.x + padding, p.y + (3*padding) + (i*padding), paint);
+                c.drawText(v.history.get(i).message, p.x + 4*padding, p.y + (3*padding) + (i*padding), paint);
             }
         }
     }
