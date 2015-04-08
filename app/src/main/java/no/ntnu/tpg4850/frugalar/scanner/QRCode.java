@@ -5,6 +5,8 @@ import android.graphics.Rect;
 
 import java.util.Date;
 
+import no.ntnu.tpg4850.frugalar.network.Valve;
+
 /**
  * Created by Olav on 18.03.2015.
  */
@@ -12,6 +14,8 @@ public class QRCode {
     public String id;
     public Date previouslySeen;
     public int[] bounds;
+    public Valve valve;
+    public boolean test = false;
 
     public QRCode(String id, int[] bounds) {
         this.id = id;
@@ -19,6 +23,17 @@ public class QRCode {
         this.previouslySeen = new Date();
     }
 
+    public void setValve(Valve v) {
+        this.valve = v;
+    }
+
+    public String toDisplay() {
+        if(this.valve == null) {
+            //TODO: Handle errors. Show em?
+            return "No data yet for valve #" + this.id;
+        }
+        return this.valve.text;
+    }
     public Point getMidpoint() {
 
         int[] v = this.bounds;

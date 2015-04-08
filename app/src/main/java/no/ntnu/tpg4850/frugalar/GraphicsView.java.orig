@@ -39,9 +39,16 @@ public class GraphicsView extends View {
         if(this.data != null) {
             for(QRCode q: this.data) {
                 paint.setColor(Color.RED);
+<<<<<<< HEAD
                 if(q.getBounds() != null) {
                     canvas.drawRect(q.getBoundsRect(), paint);
                     this.drawPanel(canvas, q);
+=======
+                Point[] rect = c.getBounds();
+                for (Point p: rect) {
+                    canvas.drawCircle(this.viewMargin + p.x*0.5f,p.y, 15, paint);
+
+>>>>>>> master
                 }
                 paint.setColor(Color.BLACK);
                 Point mid = c.getMidpoint();
