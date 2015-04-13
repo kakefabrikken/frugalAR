@@ -8,9 +8,10 @@ import java.util.Date;
  */
 public class QRStorage {
     private ArrayList<QRCode> storage;
-    private int timeLimit = 1000;
+    private int timeLimit = 2000;
 
     public QRStorage(int maxLim, int timeLimit) {
+        //TODO: maxlim not used
         this.storage = new ArrayList<QRCode>();
         this.timeLimit = timeLimit;
     }

@@ -133,22 +133,24 @@ public class GraphicsView extends View {
     }
     public void drawPanel(Canvas c, QRCode q) {
         Point p = q.getMidpoint();
-        paint.setColor(Color.argb(150, 42,54,59));
-        paint.setTextSize(20.0f);
-        //TODO: Scaling?
-        int length = 500;
-        int height = 350;
         int padding = 20;
-        p.x = (int) (( p.x)*0.65);
-        p.y = (int) ((p.y)+50);
-        Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
-        c.drawRect(panelBounds, paint);
 
         if(!q.isData()) {
             paint.setColor(Color.rgb(254,206,168));
-            c.drawText("Data not retrieved yet", p.x+ (length/2)-2*padding, p.y+ (height/2), paint);
+            c.drawText(q.id + "", p.x, p.y, paint);
+            c.drawText("Retrieving data", p.x, p.y + 2*padding, paint);
         }
         else {
+            paint.setColor(Color.argb(150, 42,54,59));
+            paint.setTextSize(20.0f);
+            //TODO: Scaling?
+            int length = 520;
+            int height = 350;
+
+            p.x = (int) (( p.x)*0.65);
+            p.y = (int) ((p.y)+50);
+            Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
+            c.drawRect(panelBounds, paint);
             Valve v = q.getValve();
             if(!v.error) {
                 paint.setColor(Color.rgb(153,186,152));
@@ -156,10 +158,11 @@ public class GraphicsView extends View {
             else {
                 paint.setColor(Color.rgb(232,74,95));
             }
-            c.drawCircle(p.x+padding, p.y+padding, 10, paint);
+            c.drawCircle(p.x +padding, p.y+padding/2, 7, paint);
             paint.setColor(Color.rgb(254,206,168));
             //TODO: Retrieve text from valve
-            c.drawText(v.valveStatus + "% open", p.x+(2*padding), p.y+padding, paint);
+            c.drawText(v.type + " " + v.id, p.x+(2*padding), p.y+padding, paint);
+            c.drawText(v.valveStatus + "% open", p.x+(8*padding), p.y+padding, paint);
             //c.drawText("Installed: " + df.format(v.installed) , p.x+(3*padding), p.y+padding, paint);
             this.drawMultiline(c, v.status, 50,p.x + padding, p.y+(2*padding));
 

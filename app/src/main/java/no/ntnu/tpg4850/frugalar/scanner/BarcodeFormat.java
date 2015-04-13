@@ -9,7 +9,7 @@ public class BarcodeFormat {
     private String mName;
 
     public static final BarcodeFormat NONE = new BarcodeFormat(Symbol.NONE, "NONE");
-    public static final BarcodeFormat PARTIAL = new BarcodeFormat(Symbol.PARTIAL, "PARTIAL");
+    /*public static final BarcodeFormat PARTIAL = new BarcodeFormat(Symbol.PARTIAL, "PARTIAL");
     public static final BarcodeFormat EAN8 = new BarcodeFormat(Symbol.EAN8, "EAN8");
     public static final BarcodeFormat UPCE = new BarcodeFormat(Symbol.UPCE, "UPCE");
     public static final BarcodeFormat ISBN10 = new BarcodeFormat(Symbol.ISBN10, "ISBN10");
@@ -22,14 +22,18 @@ public class BarcodeFormat {
     public static final BarcodeFormat CODABAR = new BarcodeFormat(Symbol.CODABAR, "CODABAR");
     public static final BarcodeFormat CODE39 = new BarcodeFormat(Symbol.CODE39, "CODE39");
     public static final BarcodeFormat PDF417 = new BarcodeFormat(Symbol.PDF417, "PDF417");
-    public static final BarcodeFormat QRCODE = new BarcodeFormat(Symbol.QRCODE, "QRCODE");
     public static final BarcodeFormat CODE93 = new BarcodeFormat(Symbol.CODE93, "CODE93");
     public static final BarcodeFormat CODE128 = new BarcodeFormat(Symbol.CODE128, "CODE128");
+    */
+
+    public static final BarcodeFormat QRCODE = new BarcodeFormat(Symbol.QRCODE, "QRCODE");
+
 
     public static final List<BarcodeFormat> ALL_FORMATS = new ArrayList<BarcodeFormat>();
+    public static final List<BarcodeFormat> QR_CODE_FORMAT = new ArrayList<BarcodeFormat>();
 
     static {
-        ALL_FORMATS.add(BarcodeFormat.PARTIAL);
+        /*ALL_FORMATS.add(BarcodeFormat.PARTIAL);
         ALL_FORMATS.add(BarcodeFormat.EAN8);
         ALL_FORMATS.add(BarcodeFormat.UPCE);
         ALL_FORMATS.add(BarcodeFormat.ISBN10);
@@ -44,7 +48,9 @@ public class BarcodeFormat {
         ALL_FORMATS.add(BarcodeFormat.PDF417);
         ALL_FORMATS.add(BarcodeFormat.QRCODE);
         ALL_FORMATS.add(BarcodeFormat.CODE93);
-        ALL_FORMATS.add(BarcodeFormat.CODE128);
+        ALL_FORMATS.add(BarcodeFormat.CODE128);*/
+
+        QR_CODE_FORMAT.add(BarcodeFormat.QRCODE);
     }
 
     public BarcodeFormat(int id, String name) {

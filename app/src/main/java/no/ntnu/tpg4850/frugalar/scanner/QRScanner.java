@@ -34,7 +34,7 @@ public class QRScanner {
         mScanner.setConfig(0, Config.Y_DENSITY, 3);
 
         mScanner.setConfig(Symbol.NONE, Config.ENABLE, 0);
-        for(BarcodeFormat format : BarcodeFormat.ALL_FORMATS) {
+        for(BarcodeFormat format : BarcodeFormat.QR_CODE_FORMAT) {
             mScanner.setConfig(format.getId(), Config.ENABLE, 1);
         }
     }
@@ -56,14 +56,16 @@ public class QRScanner {
             SymbolSet syms = mScanner.getResults();
             Log.i(TAG, syms.toString());
             for (Symbol sym : syms) {
-                Log.i(TAG, "barcode result " + sym.getData());
+                Log.i("abcd", "barcode result " + sym.getData());
                 QRCode q = new QRCode(sym.getData(), sym.getBounds());
                 Log.i(TAG, this.storage.size()+ "");
                 this.storage.Store(q);
                 detectedList.add(q);
+
                 //TODO: async storage update every so and so ms
             }
         }
+        Log.i("abcd",detectedList.size() + "");
         return detectedList;
     }
 }
