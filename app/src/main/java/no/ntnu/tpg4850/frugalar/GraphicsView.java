@@ -14,6 +14,7 @@ import android.view.View;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import no.ntnu.tpg4850.frugalar.network.Valve;
 import no.ntnu.tpg4850.frugalar.scanner.QRCode;
@@ -139,7 +140,7 @@ public class GraphicsView extends View {
         int height = 350;
         int padding = 20;
         p.x = (int) (( p.x)*0.65);
-        p.y = (int) ((p.y));
+        p.y = (int) ((p.y)+50);
         Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
         c.drawRect(panelBounds, paint);
 
@@ -160,14 +161,42 @@ public class GraphicsView extends View {
             //TODO: Retrieve text from valve
             c.drawText(v.valveStatus + "% open", p.x+(2*padding), p.y+padding, paint);
             //c.drawText("Installed: " + df.format(v.installed) , p.x+(3*padding), p.y+padding, paint);
-            c.drawText(v.status, p.x + padding, p.y+(2*padding), paint);
-            int MAX_HISTORY = 5;
-            for(int i = 0; i<v.history.size() || i< MAX_HISTORY; i++) {
+            this.drawMultiline(c, v.status, 50,p.x + padding, p.y+(2*padding));
+
+            int MAX_LINES = 10;
+            int line = 0;
+            int history_y = p.y + (5*padding);
+            for(int i = 0; i<v.history.size() && line< MAX_LINES; i++) {
                 Date d = v.history.get(i).date;
-                c.drawText(dfwt.format(d), p.x + padding, p.y + (4*padding) + (i*padding), paint);
-                c.drawText(v.history.get(i).message, p.x + 220, p.y + (4*padding) + (i*padding), paint);
+                c.drawText(dfwt.format(d), p.x + padding, history_y, paint);
+                int nr_lines = this.drawMultiline(c, v.history.get(i).message, 30, p.x + 220, history_y);
+                line += nr_lines;
+                history_y += nr_lines * (-paint.ascent() + paint.descent())*1.1;
             }
         }
+
+
+    }
+
+    public int drawMultiline(Canvas c, String s, int max_line, int x, int y) {
+        List<String> text = GraphicsView.splitEqually(s, max_line);
+        for (String line: text)
+        {
+            c.drawText(line, x, y, paint);
+            y += -paint.ascent() + paint.descent();
+        }
+        return text.size();
+    }
+
+    public static List<String> splitEqually(String text, int size) {
+        // Give the list the right capacity to start with. You could use an array
+        // instead if you wanted.
+        List<String> ret = new ArrayList<String>((text.length() + size - 1) / size);
+
+        for (int start = 0; start < text.length(); start += size) {
+            ret.add(text.substring(start, Math.min(text.length(), start + size)));
+        }
+        return ret;
     }
 }
 
