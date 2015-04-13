@@ -5,6 +5,8 @@ import android.hardware.Camera;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Timer;
+
 import no.ntnu.tpg4850.frugalar.CardboardOverlayView;
 import no.ntnu.tpg4850.frugalar.network.ValveService;
 import no.ntnu.tpg4850.frugalar.scanner.QRCode;
@@ -16,6 +18,7 @@ import no.ntnu.tpg4850.frugalar.scanner.QRStorage;
  */
 public class InformationController implements Camera.PreviewCallback {
 
+    public static final long MAX_LOOK_AT_TIME = 1500; // measured in milliseconds
     public final static String TAG = "CONTROLLER";
     private Camera camera;
     private QRStorage storage;
@@ -25,12 +28,19 @@ public class InformationController implements Camera.PreviewCallback {
     private boolean qrInFocus;
     private Point[] qrFocusBounds;
     private boolean qrTextShown;
+    private QRCode qrFocus;
+    private Point midPoint;
+    private long qrFocusStartTimer;
+
+
 
     public InformationController(CardboardOverlayView mOverlayView) {
         this.view = mOverlayView;
         this.storage = new QRStorage(10, 1000);
         this.scanner = new QRScanner(this.storage);
         this.network = new ValveService();
+        qrInFocus = false;
+        midPoint = getMidPoint();
     }
 
     public void setCamera(Camera cam) {
@@ -50,7 +60,12 @@ public class InformationController implements Camera.PreviewCallback {
         ArrayList<QRCode> recentQRCodes = this.storage.getAll();
         this.view.setCurrentQrData(recentQRCodes);
         //String s = "";
+
+
         for(QRCode qr: recentQRCodes) {
+            if (qrInFocus(qr,midPoint)) {
+                displayQrFocusInformation(qr);
+            }
             if(!qr.isData()) {
                 this.network.get(qr.id, qr);
             }
@@ -59,14 +74,18 @@ public class InformationController implements Camera.PreviewCallback {
         //this.view.show3DToast(s);
     }
 
+    //private
+
     public void trigger() {
         Log.i("Entering trigger", "Now what");
         QRCode selected = null;
+        /*
         int[] reticuleBounds = view.getGraphicsviewDimensions();
         int width = reticuleBounds[0];
         int height = reticuleBounds[1];
 
         Point midPoint = new Point((int)(width/2.0), (int)(height/2.0));
+        */
         Double leastDistance = -1.0;
         if (storage.getAll() != null) {//storage.getAll().size() > 0) {
             Log.i("storage nonempty", "we have action");
@@ -76,13 +95,6 @@ public class InformationController implements Camera.PreviewCallback {
                     Log.i("qrFocus", "KAAAAAAAAAAAAAAAAAAAAAAHN");
                     view.show3DToast("WE HAVE DA QR\n" + qr.toString());
                 }
-                /*Double dist = getDistanceToQR(midPoint, qr);
-                if (dist < leastDistance && dist > -1.0) {
-                    leastDistance = dist;
-                    selected = qr;
-                }
-                */
-
             }
         }
         else {
@@ -93,6 +105,52 @@ public class InformationController implements Camera.PreviewCallback {
         if (selected != null) {
             view.show3DToast(selected.toString());
         }
+    }
+
+    private void displayQrFocusInformation(QRCode qr) {
+        // there is a qr code in focus. This previously set qr code and the currently observed qr code are the same
+        if (qrFocus != null && qrFocus.getId().equals(qr.getId())) {
+            // haven't looked long enough at the qr code
+            if (System.currentTimeMillis() - qrFocusStartTimer < MAX_LOOK_AT_TIME) {}
+            else {
+                ArrayList<QRCode> arr = new ArrayList<QRCode>(1);
+                arr.add(qrFocus);
+                view.setCurrentQrData(arr);
+            }
+        }
+        else {
+            qrFocus = qr;
+            qrFocusStartTimer = System.currentTimeMillis();
+        }
+
+        /*
+        if (qrFocus == null) { // we have no qr set in focus from before
+            qrFocus = qr;
+            qrFocusStartTimer = System.currentTimeMillis();
+        }
+        else if (qrFocus.getId().equals(qr.getId())) { // previously set qr code and currently observed qr code are the same
+            // haven't looked long enough at the qr code
+            if (System.currentTimeMillis() - qrFocusStartTimer < MAX_LOOK_AT_TIME) {}
+            else {
+                ArrayList<QRCode> arr = new ArrayList<QRCode>(1);
+                arr.add(qrFocus);
+                view.setCurrentQrData(arr);
+            }
+        }
+        else {
+            // qr focus and currently observed qr code are not the same, so reset qr focus and the timer
+            qrFocus = qr;
+            qrFocusStartTimer = System.currentTimeMillis();
+        }
+        */
+    }
+
+    private Point getMidPoint() {
+        int[] reticuleBounds = view.getGraphicsviewDimensions();
+        int width = reticuleBounds[0];
+        int height = reticuleBounds[1];
+
+        return new Point((int)(width/2.0), (int)(height/2.0));
     }
 
     private boolean qrInFocus(QRCode qr , Point midpoint) {

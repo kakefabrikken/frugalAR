@@ -27,6 +27,10 @@ public class QRCode {
         this.valve = v;
     }
 
+    public String getId() {
+        return this.id;
+    }
+
     public boolean isData() {
         if(this.valve != null) {
             return true;
