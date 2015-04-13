@@ -51,10 +51,8 @@ public class InformationController implements Camera.PreviewCallback {
         this.view.setCurrentQrData(recentQRCodes);
         //String s = "";
         for(QRCode qr: recentQRCodes) {
-            //s += qr.id + " ";
-            if(qr.test == false) {
+            if(!qr.isData()) {
                 this.network.get(qr.id, qr);
-                qr.test = true;
             }
         }
 

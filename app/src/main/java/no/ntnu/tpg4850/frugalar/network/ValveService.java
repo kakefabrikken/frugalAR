@@ -15,8 +15,12 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import no.ntnu.tpg4850.frugalar.scanner.QRCode;
 
@@ -35,27 +39,20 @@ public class ValveService {
                 HttpResponse response;
                 JSONObject json = new JSONObject();
 
-
+                JsonReader reader = null;
                 try {
                     HttpGet get = new HttpGet(BASE_URL + "/valve/" + id);
                     Log.i("ValveMessage", "Sent request to" + BASE_URL + "/valve/" + id );
-                    //StringEntity se = new StringEntity( json.toString());
-                    //se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-                    //post.setEntity(se);
+
                     response = client.execute(get);
 
                     /*Checking response */
                     if(response!=null){
 
                         InputStream in = response.getEntity().getContent(); //Get the data in the entity
-                        JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
-                        try {
-                            Valve v = createValve(reader);
-                            qrCode.setValve(v);
-                        }
-                        finally {
-                            reader.close();
-                        }
+                        reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+                        reader.setLenient(true);
+
                         Log.i("ValveMessage", response.toString());
                     }
 
@@ -63,10 +60,27 @@ public class ValveService {
                     e.printStackTrace();
                     Log.i("ValveMessage", "Cannot establish connection");
         //createDialog("Error", "Cannot Estabilish Connection");
-    }
+                }
 
-    Looper.loop(); //Loop in the message queue
-}
+                if(reader != null) {
+                    try {
+                        Valve v = createValve(reader);
+                        qrCode.setValve(v);
+                        reader.close();
+
+                    } catch (Exception e) {
+                        Log.i("ValveMessage", "Error in json converting");
+                        Log.i("ValveMessage", e.getMessage());
+                        Log.i("ValveMessage", e.getLocalizedMessage());
+                        for(StackTraceElement t: e.getStackTrace()) {
+                            Log.i("ValveMessage", t.toString());
+                        }
+                    }
+
+                }
+                Looper.loop(); //Loop in the message queue
+
+            }
 };
 
         t.start();
@@ -82,7 +96,7 @@ public class ValveService {
      * @return Valve object
      * @throws IOException
      */
-    private Valve createValve(JsonReader reader) throws IOException {
+    private Valve createValve(JsonReader reader) throws Exception {
 
         Valve v = new Valve();
         reader.beginObject();
@@ -99,12 +113,12 @@ public class ValveService {
                 ArrayList<Message> history = new ArrayList<Message>();
 
                 while(reader.hasNext()) {
-                    String innerName = reader.nextName();
-                    Message m = new Message();
                     reader.beginObject();
+                    Message m = new Message();
                     while(reader.hasNext()) {
+                        String innerName = reader.nextName();
                         if (innerName.equals("date")) {
-                            m.date = new Date(reader.nextString());
+                            m.date = ValveService.createDate(reader.nextString());
                         }
                         else if (innerName.equals("message")) {
                             m.message = reader.nextString();
@@ -123,7 +137,7 @@ public class ValveService {
                 v.status = reader.nextString();
             }
             else if(name.equals("installed")) {
-                v.installed = new Date(reader.nextString());
+                v.installed = ValveService.createDate(reader.nextString());
             }
             else if(name.equals("work_permission")) {
                 v.workPermission = reader.nextBoolean();
@@ -158,11 +172,27 @@ public class ValveService {
             else if(name.equals("supplier")) {
                 v.supplier = reader.nextString();
             }
+            else if(name.equals("error")) {
+                v.error = reader.nextBoolean();
+            }
             else {
                 reader.skipValue();
             }
         }
         reader.endObject();
+
         return v;
+    }
+
+    private static Date createDate(String iso8601string) throws ParseException {
+        Calendar calendar = GregorianCalendar.getInstance();
+        String s = iso8601string.replace("Z", "+00:00");
+        try {
+            s = s.substring(0, 22) + s.substring(23);  // to get rid of the ":"
+        } catch (IndexOutOfBoundsException e) {
+            throw new ParseException("Invalid length", 0);
+        }
+        Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(s);
+        return date;
     }
 }

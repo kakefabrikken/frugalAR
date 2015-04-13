@@ -5,13 +5,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import no.ntnu.tpg4850.frugalar.network.Valve;
 import no.ntnu.tpg4850.frugalar.scanner.QRCode;
 
 public class GraphicsView extends View {
@@ -20,6 +24,8 @@ public class GraphicsView extends View {
     public ArrayList<QRCode> data;
     private float viewMargin = 0.0f;
     private int cameraWidth = 100;
+    SimpleDateFormat dfwt = new SimpleDateFormat("dd-mm-yy hh:mm:ss");
+    SimpleDateFormat df = new SimpleDateFormat("dd-mm-yyyy");
 
     public GraphicsView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -99,22 +105,69 @@ public class GraphicsView extends View {
         //int w = this.getWidth();
 
         if(this.data != null) {
-            for(QRCode c: this.data) {
-                paint.setColor(Color.RED);
-                Point[] rect = c.getBounds();
-                for (Point p: rect) {
-                    canvas.drawCircle(this.viewMargin + p.x*0.5f,p.y, 15, paint);
-
+            for(QRCode q: this.data) {
+                if(q.getBoundsRaw() != null) {
+                    this.drawQRBoundingBox(canvas, q);
+                    //TODO: Reticule integration
+                    this.drawPanel(canvas, q);
                 }
                 paint.setColor(Color.BLACK);
-                Point mid = c.getMidpoint();
-                //TODO:Get real size and scale text according to distance. Faux 3D effect
+                Point mid = q.getMidpoint();
                 paint.setTextSize(48f);
-                canvas.drawText(c.toDisplay(), mid.x, mid.y, paint);
+                canvas.drawText(q.id, mid.x, mid.y, paint);
 
             }
         }
         this.invalidate();
+    }
+
+    private void drawQRBoundingBox(Canvas c, QRCode q) {
+        int[] b = q.getBoundsRaw();
+        paint.setColor(Color.RED);
+        paint.setStrokeWidth(1.0f);
+        paint.setStyle(Paint.Style.STROKE);
+        Rect rectangle = new Rect((int)((b[0]*0.65)-this.viewMargin), b[1], (int)((b[0]+b[2])*0.65), b[1]+b[3]);
+        c.drawRect(rectangle, paint);
+        paint.setStyle(Paint.Style.FILL);
+    }
+    public void drawPanel(Canvas c, QRCode q) {
+        Point p = q.getMidpoint();
+        paint.setColor(Color.argb(150, 42,54,59));
+        paint.setTextSize(20.0f);
+        //TODO: Scaling?
+        int length = 500;
+        int height = 350;
+        int padding = 20;
+        p.x = (int) (( p.x)*0.65);
+        p.y = (int) ((p.y));
+        Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
+        c.drawRect(panelBounds, paint);
+
+        if(!q.isData()) {
+            paint.setColor(Color.rgb(254,206,168));
+            c.drawText("Data not retrieved yet", p.x+ (length/2)-2*padding, p.y+ (height/2), paint);
+        }
+        else {
+            Valve v = q.getValve();
+            if(!v.error) {
+                paint.setColor(Color.rgb(153,186,152));
+            }
+            else {
+                paint.setColor(Color.rgb(232,74,95));
+            }
+            c.drawCircle(p.x+padding, p.y+padding, 10, paint);
+            paint.setColor(Color.rgb(254,206,168));
+            //TODO: Retrieve text from valve
+            c.drawText(v.valveStatus + "% open", p.x+(2*padding), p.y+padding, paint);
+            //c.drawText("Installed: " + df.format(v.installed) , p.x+(3*padding), p.y+padding, paint);
+            c.drawText(v.status, p.x + padding, p.y+(2*padding), paint);
+            int MAX_HISTORY = 5;
+            for(int i = 0; i<v.history.size() || i< MAX_HISTORY; i++) {
+                Date d = v.history.get(i).date;
+                c.drawText(dfwt.format(d), p.x + padding, p.y + (4*padding) + (i*padding), paint);
+                c.drawText(v.history.get(i).message, p.x + 220, p.y + (4*padding) + (i*padding), paint);
+            }
+        }
     }
 }
 
