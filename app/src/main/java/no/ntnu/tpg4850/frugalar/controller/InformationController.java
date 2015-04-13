@@ -106,6 +106,13 @@ public class InformationController implements Camera.PreviewCallback {
         Point[] bounds = qr.getBounds();
         Point p1 = bounds[0];
         Point p3 = bounds[2];
+        /*
+                     ---p3
+            |   .        |
+            |            |
+            p1--
+            Checking if midpoint is contained by the points p1 and p3
+         */
         if (p1.x <= midpoint.x && p1.y <= midpoint.y && p3.x >= midpoint.x && p3.y >= midpoint.y) {
             return true;
         }

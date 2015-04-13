@@ -37,6 +37,31 @@ public class GraphicsView extends View {
         this.viewMargin = m;
     }
 
+
+
+    @Override
+    public void onDraw(Canvas canvas) {
+        drawReticule(canvas);
+        //canvas.drawColor(Color.BLUE);
+        //int w = this.getWidth();
+
+        if(this.data != null) {
+            for(QRCode q: this.data) {
+                if(q.getBoundsRaw() != null) {
+                    this.drawQRBoundingBox(canvas, q);
+                    //TODO: Reticule integration
+                    this.drawPanel(canvas, q);
+                }
+                paint.setColor(Color.BLACK);
+                Point mid = q.getMidpoint();
+                paint.setTextSize(48f);
+                canvas.drawText(q.id, mid.x, mid.y, paint);
+
+            }
+        }
+        this.invalidate();
+    }
+
     private void drawReticule(Canvas c) {
         Paint p = new Paint();
         p.setColor(Color.BLACK);
@@ -95,30 +120,7 @@ public class GraphicsView extends View {
     }
 
     private void drawLineHelper(float[] line, Canvas c, Paint p) {
-        c.drawLine(line[0],line[1],line[2],line[3], p);
-    }
-
-    @Override
-    public void onDraw(Canvas canvas) {
-        drawReticule(canvas);
-        //canvas.drawColor(Color.BLUE);
-        //int w = this.getWidth();
-
-        if(this.data != null) {
-            for(QRCode q: this.data) {
-                if(q.getBoundsRaw() != null) {
-                    this.drawQRBoundingBox(canvas, q);
-                    //TODO: Reticule integration
-                    this.drawPanel(canvas, q);
-                }
-                paint.setColor(Color.BLACK);
-                Point mid = q.getMidpoint();
-                paint.setTextSize(48f);
-                canvas.drawText(q.id, mid.x, mid.y, paint);
-
-            }
-        }
-        this.invalidate();
+        c.drawLine(line[0], line[1], line[2], line[3], p);
     }
 
     private void drawQRBoundingBox(Canvas c, QRCode q) {
