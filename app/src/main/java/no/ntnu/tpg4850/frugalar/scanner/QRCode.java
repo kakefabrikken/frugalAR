@@ -16,15 +16,21 @@ public class QRCode {
     public int[] bounds;
     public Valve valve;
     public boolean test = false;
+    public boolean inFocus;
 
     public QRCode(String id, int[] bounds) {
         this.id = id;
         this.bounds = bounds;
         this.previouslySeen = new Date();
+        this.inFocus = false;
     }
 
     public void setValve(Valve v) {
         this.valve = v;
+    }
+
+    public void setInFocus(boolean status) {
+        this.inFocus = status;
     }
 
     public String getId() {

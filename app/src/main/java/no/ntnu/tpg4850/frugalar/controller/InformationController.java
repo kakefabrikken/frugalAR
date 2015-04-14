@@ -25,9 +25,8 @@ public class InformationController implements Camera.PreviewCallback {
     private QRScanner scanner;
     private ValveService network;
     private CardboardOverlayView view;
-    private boolean qrInFocus;
-    private Point[] qrFocusBounds;
-    private boolean qrTextShown;
+    //private Point[] qrFocusBounds;
+    //private boolean qrTextShown;
     private QRCode qrFocus;
     private Point midPoint;
     private long qrFocusStartTimer;
@@ -39,7 +38,6 @@ public class InformationController implements Camera.PreviewCallback {
         this.storage = new QRStorage(10, 1000);
         this.scanner = new QRScanner(this.storage);
         this.network = new ValveService();
-        qrInFocus = false;
         midPoint = getMidPoint();
     }
 
@@ -58,23 +56,18 @@ public class InformationController implements Camera.PreviewCallback {
         ArrayList<QRCode> QRInFocus = scanner.scanImage(data, size.width, size.height); //QR codes found for this specific image
         this.storage.updateAll();
         ArrayList<QRCode> recentQRCodes = this.storage.getAll();
-        this.view.setCurrentQrData(recentQRCodes);
-        //String s = "";
-
 
         for(QRCode qr: recentQRCodes) {
             if (qrInFocus(qr,midPoint)) {
-                displayQrFocusInformation(qr);
+                setQrFocusInformation(qr);
             }
             if(!qr.isData()) {
                 this.network.get(qr.id, qr);
             }
         }
-
-        //this.view.show3DToast(s);
+        this.view.setCurrentQrData(recentQRCodes);
     }
 
-    //private
 
     public void trigger() {
         Log.i("Entering trigger", "Now what");
@@ -108,42 +101,19 @@ public class InformationController implements Camera.PreviewCallback {
     }
 
     // sets the graphics model qr code data if the qr code has been in focus for at least MAX_LOOK_AT_TIME milliseconds
-    private void displayQrFocusInformation(QRCode qr) {
+    private void setQrFocusInformation(QRCode qr) {
         // there is a qr code in focus. This previously set qr code and the currently observed qr code are the same
         if (qrFocus != null && qrFocus.getId().equals(qr.getId())) {
             // haven't looked long enough at the qr code
             if (System.currentTimeMillis() - qrFocusStartTimer < MAX_LOOK_AT_TIME) {}
             else {
-                ArrayList<QRCode> arr = new ArrayList<QRCode>(1);
-                arr.add(qrFocus);
-                view.setCurrentQrData(arr);
+                qr.setInFocus(true);
             }
         }
         else {
             qrFocus = qr;
             qrFocusStartTimer = System.currentTimeMillis();
         }
-
-        /*
-        if (qrFocus == null) { // we have no qr set in focus from before
-            qrFocus = qr;
-            qrFocusStartTimer = System.currentTimeMillis();
-        }
-        else if (qrFocus.getId().equals(qr.getId())) { // previously set qr code and currently observed qr code are the same
-            // haven't looked long enough at the qr code
-            if (System.currentTimeMillis() - qrFocusStartTimer < MAX_LOOK_AT_TIME) {}
-            else {
-                ArrayList<QRCode> arr = new ArrayList<QRCode>(1);
-                arr.add(qrFocus);
-                view.setCurrentQrData(arr);
-            }
-        }
-        else {
-            // qr focus and currently observed qr code are not the same, so reset qr focus and the timer
-            qrFocus = qr;
-            qrFocusStartTimer = System.currentTimeMillis();
-        }
-        */
     }
 
     private Point getMidPoint() {
