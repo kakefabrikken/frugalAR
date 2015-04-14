@@ -35,7 +35,7 @@ public class InformationController implements Camera.PreviewCallback {
 
     public InformationController(CardboardOverlayView mOverlayView) {
         this.view = mOverlayView;
-        this.storage = new QRStorage(10, 1000);
+        this.storage = new QRStorage(10, 3000);
         this.scanner = new QRScanner(this.storage);
         this.network = new ValveService();
         midPoint = getMidPoint();
@@ -54,6 +54,7 @@ public class InformationController implements Camera.PreviewCallback {
         Camera.Parameters parameters = camera.getParameters();
         Camera.Size size = parameters.getPreviewSize();
         ArrayList<QRCode> QRInFocus = scanner.scanImage(data, size.width, size.height); //QR codes found for this specific image
+
         this.storage.updateAll();
         ArrayList<QRCode> recentQRCodes = this.storage.getAll();
 

@@ -14,6 +14,7 @@ import android.view.View;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import no.ntnu.tpg4850.frugalar.network.Valve;
 import no.ntnu.tpg4850.frugalar.scanner.QRCode;
@@ -53,16 +54,13 @@ public class GraphicsView extends View {
                     if (q.getinFocus()){
                         this.drawPanel(canvas, q);
                     }
-
                 }
-                paint.setColor(Color.BLACK);
-                Point mid = q.getMidpoint();
-                paint.setTextSize(48f);
-                canvas.drawText(q.id, mid.x, mid.y, paint);
+
 
             }
         }
         this.invalidate();
+
     }
 
     private void drawReticule(Canvas c) {
@@ -126,6 +124,8 @@ public class GraphicsView extends View {
         c.drawLine(line[0], line[1], line[2], line[3], p);
     }
 
+
+
     private void drawQRBoundingBox(Canvas c, QRCode q) {
         int[] b = q.getBoundsRaw();
         paint.setColor(Color.RED);
@@ -137,22 +137,25 @@ public class GraphicsView extends View {
     }
     public void drawPanel(Canvas c, QRCode q) {
         Point p = q.getMidpoint();
-        paint.setColor(Color.argb(150, 42,54,59));
-        paint.setTextSize(20.0f);
-        //TODO: Scaling?
-        int length = 500;
-        int height = 350;
         int padding = 20;
-        p.x = (int) (( p.x)*0.65);
-        p.y = (int) ((p.y));
-        Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
-        c.drawRect(panelBounds, paint);
 
         if(!q.isData()) {
+            paint.setTextSize(30f);
             paint.setColor(Color.rgb(254,206,168));
-            c.drawText("Data not retrieved yet", p.x+ (length/2)-2*padding, p.y+ (height/2), paint);
+            c.drawText(q.id + "", p.x, p.y, paint);
+            c.drawText("Retrieving data", p.x, p.y + 2*padding, paint);
         }
         else {
+            paint.setColor(Color.argb(150, 42,54,59));
+            paint.setTextSize(20.0f);
+            //TODO: Scaling?
+            int length = 520;
+            int height = 350;
+
+            p.x = (int) (( p.x)*0.65);
+            p.y = (int) ((p.y)+50);
+            Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
+            c.drawRect(panelBounds, paint);
             Valve v = q.getValve();
             if(!v.error) {
                 paint.setColor(Color.rgb(153,186,152));
@@ -160,19 +163,63 @@ public class GraphicsView extends View {
             else {
                 paint.setColor(Color.rgb(232,74,95));
             }
-            c.drawCircle(p.x+padding, p.y+padding, 10, paint);
+            c.drawCircle(p.x +padding, p.y+padding/2, 7, paint);
             paint.setColor(Color.rgb(254,206,168));
             //TODO: Retrieve text from valve
-            c.drawText(v.valveStatus + "% open", p.x+(2*padding), p.y+padding, paint);
+            c.drawText(v.type + " " + v.id, p.x+(2*padding), p.y+padding, paint);
+            c.drawText(v.valveStatus + "% open", p.x+(8*padding), p.y+padding, paint);
+            c.drawText(v.flow + " flow", p.x+(14*padding), p.y+padding, paint);
             //c.drawText("Installed: " + df.format(v.installed) , p.x+(3*padding), p.y+padding, paint);
-            c.drawText(v.status, p.x + padding, p.y+(2*padding), paint);
-            int MAX_HISTORY = 5;
-            for(int i = 0; i<v.history.size() || i< MAX_HISTORY; i++) {
+            this.drawMultiline(c, v.status, 50,p.x + padding, p.y+(2*padding));
+
+            int MAX_LINES = 10;
+            int line = 0;
+            int history_y = p.y + (5*padding);
+            for(int i = 0; i<v.history.size() && line< MAX_LINES; i++) {
                 Date d = v.history.get(i).date;
-                c.drawText(dfwt.format(d), p.x + padding, p.y + (4*padding) + (i*padding), paint);
-                c.drawText(v.history.get(i).message, p.x + 220, p.y + (4*padding) + (i*padding), paint);
+                c.drawText(dfwt.format(d), p.x + padding, history_y, paint);
+                int nr_lines = this.drawMultiline(c, v.history.get(i).message, 30, p.x + 220, history_y);
+                line += nr_lines;
+                history_y += nr_lines * (-paint.ascent() + paint.descent())*1.1;
+            }
+            int valve_y = p.y+ height - 2*padding;
+            c.drawText("Open:" + v.turnsToOpen, p.x + padding, valve_y, paint);
+            c.drawText("Close:" + v.turnsToClosed, p.x + 6*padding, valve_y, paint);
+            c.drawText("T.:" + v.temperature, p.x + 12*padding, valve_y, paint);
+
+            int end_y = p.y+ height - padding;
+            if(v.workPermission) {
+                paint.setColor(Color.rgb(153,186,152));
+                c.drawText(v.workPermissionInfo, p.x + padding, end_y, paint);
+            }
+            else {
+                paint.setColor(Color.rgb(232,74,95));
+                c.drawText("No work permissions", p.x + padding, end_y, paint);
             }
         }
+
+
+    }
+
+    public int drawMultiline(Canvas c, String s, int max_line, int x, int y) {
+        List<String> text = GraphicsView.splitEqually(s, max_line);
+        for (String line: text)
+        {
+            c.drawText(line, x, y, paint);
+            y += -paint.ascent() + paint.descent();
+        }
+        return text.size();
+    }
+
+    public static List<String> splitEqually(String text, int size) {
+        // Give the list the right capacity to start with. You could use an array
+        // instead if you wanted.
+        List<String> ret = new ArrayList<String>((text.length() + size - 1) / size);
+
+        for (int start = 0; start < text.length(); start += size) {
+            ret.add(text.substring(start, Math.min(text.length(), start + size)));
+        }
+        return ret;
     }
 }
 
