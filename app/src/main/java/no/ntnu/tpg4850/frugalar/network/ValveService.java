@@ -69,6 +69,7 @@ public class ValveService {
                         reader.close();
 
                     } catch (Exception e) {
+                        qrCode.networkFailed = true;
                         Log.i("ValveMessage", "Error in json converting");
                         Log.i("ValveMessage", e.getMessage());
                         Log.i("ValveMessage", e.getLocalizedMessage());
@@ -77,6 +78,9 @@ public class ValveService {
                         }
                     }
 
+                }
+                else {
+                    qrCode.networkFailed = true;
                 }
                 Looper.loop(); //Loop in the message queue
 

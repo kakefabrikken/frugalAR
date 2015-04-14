@@ -50,17 +50,33 @@ public class GraphicsView extends View {
             for(QRCode q: this.data) {
                 if(q.getBoundsRaw() != null) {
                     this.drawQRBoundingBox(canvas, q);
+                    if(!q.isData()) {
+                        drawIdAndStatus(canvas,q);
+                    }
                     //TODO: Reticule integration
-                    if (q.getinFocus()){
+                    if (q.getinFocus() && q.isData()){
                         this.drawPanel(canvas, q);
                     }
                 }
-
-
             }
         }
         this.invalidate();
 
+    }
+
+    private void drawIdAndStatus(Canvas c, QRCode q) {
+        Point p = q.getMidpoint();
+        int padding = 20;
+
+        paint.setTextSize(30f);
+        paint.setColor(Color.rgb(254,206,168));
+        c.drawText(q.id + "", p.x, p.y, paint);
+        if(!q.networkFailed) {
+            c.drawText("Retrieving data", p.x, p.y + 2*padding, paint);
+        }
+        else {
+            c.drawText("Could not retrieve data", p.x, p.y + 2 * padding, paint);
+        }
     }
 
     private void drawReticule(Canvas c) {
@@ -135,67 +151,60 @@ public class GraphicsView extends View {
         c.drawRect(rectangle, paint);
         paint.setStyle(Paint.Style.FILL);
     }
+
     public void drawPanel(Canvas c, QRCode q) {
         Point p = q.getMidpoint();
         int padding = 20;
 
-        if(!q.isData()) {
-            paint.setTextSize(30f);
-            paint.setColor(Color.rgb(254,206,168));
-            c.drawText(q.id + "", p.x, p.y, paint);
-            c.drawText("Retrieving data", p.x, p.y + 2*padding, paint);
+        paint.setColor(Color.argb(150, 42,54,59));
+        paint.setTextSize(20.0f);
+        //TODO: Scaling?
+        int length = 520;
+        int height = 350;
+
+        p.x = (int) (( p.x)*0.65);
+        p.y = (int) ((p.y)+50);
+        Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
+        c.drawRect(panelBounds, paint);
+        Valve v = q.getValve();
+        if(!v.error) {
+            paint.setColor(Color.rgb(153,186,152));
         }
         else {
-            paint.setColor(Color.argb(150, 42,54,59));
-            paint.setTextSize(20.0f);
-            //TODO: Scaling?
-            int length = 520;
-            int height = 350;
+            paint.setColor(Color.rgb(232,74,95));
+        }
+        c.drawCircle(p.x +padding, p.y+padding/2, 7, paint);
+        paint.setColor(Color.rgb(254,206,168));
+        //TODO: Retrieve text from valve
+        c.drawText(v.type + " " + v.id, p.x+(2*padding), p.y+padding, paint);
+        c.drawText(v.valveStatus + "% open", p.x+(8*padding), p.y+padding, paint);
+        c.drawText(v.flow + " flow", p.x+(14*padding), p.y+padding, paint);
+        //c.drawText("Installed: " + df.format(v.installed) , p.x+(3*padding), p.y+padding, paint);
+        this.drawMultiline(c, v.status, 50,p.x + padding, p.y+(2*padding));
 
-            p.x = (int) (( p.x)*0.65);
-            p.y = (int) ((p.y)+50);
-            Rect panelBounds = new Rect(p.x, p.y, p.x+length, p.y+height);
-            c.drawRect(panelBounds, paint);
-            Valve v = q.getValve();
-            if(!v.error) {
-                paint.setColor(Color.rgb(153,186,152));
-            }
-            else {
-                paint.setColor(Color.rgb(232,74,95));
-            }
-            c.drawCircle(p.x +padding, p.y+padding/2, 7, paint);
-            paint.setColor(Color.rgb(254,206,168));
-            //TODO: Retrieve text from valve
-            c.drawText(v.type + " " + v.id, p.x+(2*padding), p.y+padding, paint);
-            c.drawText(v.valveStatus + "% open", p.x+(8*padding), p.y+padding, paint);
-            c.drawText(v.flow + " flow", p.x+(14*padding), p.y+padding, paint);
-            //c.drawText("Installed: " + df.format(v.installed) , p.x+(3*padding), p.y+padding, paint);
-            this.drawMultiline(c, v.status, 50,p.x + padding, p.y+(2*padding));
+        int MAX_LINES = 10;
+        int line = 0;
+        int history_y = p.y + (5*padding);
+        for(int i = 0; i<v.history.size() && line< MAX_LINES; i++) {
+            Date d = v.history.get(i).date;
+            c.drawText(dfwt.format(d), p.x + padding, history_y, paint);
+            int nr_lines = this.drawMultiline(c, v.history.get(i).message, 30, p.x + 220, history_y);
+            line += nr_lines;
+            history_y += nr_lines * (-paint.ascent() + paint.descent())*1.1;
+        }
+        int valve_y = p.y+ height - 2*padding;
+        c.drawText("Open:" + v.turnsToOpen, p.x + padding, valve_y, paint);
+        c.drawText("Close:" + v.turnsToClosed, p.x + 6*padding, valve_y, paint);
+        c.drawText("T.:" + v.temperature, p.x + 12*padding, valve_y, paint);
 
-            int MAX_LINES = 10;
-            int line = 0;
-            int history_y = p.y + (5*padding);
-            for(int i = 0; i<v.history.size() && line< MAX_LINES; i++) {
-                Date d = v.history.get(i).date;
-                c.drawText(dfwt.format(d), p.x + padding, history_y, paint);
-                int nr_lines = this.drawMultiline(c, v.history.get(i).message, 30, p.x + 220, history_y);
-                line += nr_lines;
-                history_y += nr_lines * (-paint.ascent() + paint.descent())*1.1;
-            }
-            int valve_y = p.y+ height - 2*padding;
-            c.drawText("Open:" + v.turnsToOpen, p.x + padding, valve_y, paint);
-            c.drawText("Close:" + v.turnsToClosed, p.x + 6*padding, valve_y, paint);
-            c.drawText("T.:" + v.temperature, p.x + 12*padding, valve_y, paint);
-
-            int end_y = p.y+ height - padding;
-            if(v.workPermission) {
-                paint.setColor(Color.rgb(153,186,152));
-                c.drawText(v.workPermissionInfo, p.x + padding, end_y, paint);
-            }
-            else {
-                paint.setColor(Color.rgb(232,74,95));
-                c.drawText("No work permissions", p.x + padding, end_y, paint);
-            }
+        int end_y = p.y+ height - padding;
+        if(v.workPermission) {
+            paint.setColor(Color.rgb(153,186,152));
+            c.drawText(v.workPermissionInfo, p.x + padding, end_y, paint);
+        }
+        else {
+            paint.setColor(Color.rgb(232,74,95));
+            c.drawText("No work permissions", p.x + padding, end_y, paint);
         }
 
 
