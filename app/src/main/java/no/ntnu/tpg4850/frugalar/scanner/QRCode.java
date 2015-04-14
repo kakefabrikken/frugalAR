@@ -16,7 +16,7 @@ public class QRCode {
     public int[] bounds;
     public Valve valve;
     public boolean test = false;
-    public boolean inFocus;
+    private boolean inFocus;
 
     public QRCode(String id, int[] bounds) {
         this.id = id;
@@ -31,6 +31,10 @@ public class QRCode {
 
     public void setInFocus(boolean status) {
         this.inFocus = status;
+    }
+
+    public boolean getinFocus() {
+        return this.inFocus;
     }
 
     public String getId() {

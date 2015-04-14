@@ -50,7 +50,10 @@ public class GraphicsView extends View {
                 if(q.getBoundsRaw() != null) {
                     this.drawQRBoundingBox(canvas, q);
                     //TODO: Reticule integration
-                    this.drawPanel(canvas, q);
+                    if (q.getinFocus()){
+                        this.drawPanel(canvas, q);
+                    }
+
                 }
                 paint.setColor(Color.BLACK);
                 Point mid = q.getMidpoint();
