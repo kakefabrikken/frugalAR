@@ -136,7 +136,12 @@ public class GraphicsView extends View {
             paint.setTextSize(30f);
             paint.setColor(Color.rgb(254,206,168));
             c.drawText(q.id + "", p.x, p.y, paint);
-            c.drawText("Retrieving data", p.x, p.y + 2*padding, paint);
+            if(!q.networkFailed) {
+                c.drawText("Retrieving data", p.x, p.y + 2*padding, paint);
+            }
+            else {
+                c.drawText("Could not retrieve data", p.x, p.y + 2*padding, paint);
+            }
         }
         else {
             paint.setColor(Color.argb(150, 42,54,59));
