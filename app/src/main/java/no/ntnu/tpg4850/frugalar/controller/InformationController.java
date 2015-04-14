@@ -107,6 +107,7 @@ public class InformationController implements Camera.PreviewCallback {
         }
     }
 
+    // sets the graphics model qr code data if the qr code has been in focus for at least MAX_LOOK_AT_TIME milliseconds
     private void displayQrFocusInformation(QRCode qr) {
         // there is a qr code in focus. This previously set qr code and the currently observed qr code are the same
         if (qrFocus != null && qrFocus.getId().equals(qr.getId())) {
