@@ -54,7 +54,8 @@ public class GraphicsView extends View {
                         drawIdAndStatus(canvas,q);
                     }
                     //TODO: Reticule integration
-                    if (q.getinFocus() && q.isData()){
+                    //q.getinFocus() &&
+                    if (q.isData()){
                         this.drawPanel(canvas, q);
                     }
                 }
