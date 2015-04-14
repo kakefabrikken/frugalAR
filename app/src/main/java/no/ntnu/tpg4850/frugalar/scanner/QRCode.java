@@ -15,7 +15,7 @@ public class QRCode {
     public Date previouslySeen;
     public int[] bounds;
     public Valve valve;
-    public boolean test = false;
+    public boolean networkFailed = false;
 
     public QRCode(String id, int[] bounds) {
         this.id = id;
