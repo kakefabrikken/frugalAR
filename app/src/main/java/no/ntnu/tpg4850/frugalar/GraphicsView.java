@@ -112,10 +112,7 @@ public class GraphicsView extends View {
                     //TODO: Reticule integration
                     this.drawPanel(canvas, q);
                 }
-                paint.setColor(Color.BLACK);
-                Point mid = q.getMidpoint();
-                paint.setTextSize(48f);
-                canvas.drawText(q.id, mid.x, mid.y, paint);
+
 
             }
         }
@@ -136,6 +133,7 @@ public class GraphicsView extends View {
         int padding = 20;
 
         if(!q.isData()) {
+            paint.setTextSize(30f);
             paint.setColor(Color.rgb(254,206,168));
             c.drawText(q.id + "", p.x, p.y, paint);
             c.drawText("Retrieving data", p.x, p.y + 2*padding, paint);
@@ -163,6 +161,7 @@ public class GraphicsView extends View {
             //TODO: Retrieve text from valve
             c.drawText(v.type + " " + v.id, p.x+(2*padding), p.y+padding, paint);
             c.drawText(v.valveStatus + "% open", p.x+(8*padding), p.y+padding, paint);
+            c.drawText(v.flow + " flow", p.x+(14*padding), p.y+padding, paint);
             //c.drawText("Installed: " + df.format(v.installed) , p.x+(3*padding), p.y+padding, paint);
             this.drawMultiline(c, v.status, 50,p.x + padding, p.y+(2*padding));
 
@@ -175,6 +174,20 @@ public class GraphicsView extends View {
                 int nr_lines = this.drawMultiline(c, v.history.get(i).message, 30, p.x + 220, history_y);
                 line += nr_lines;
                 history_y += nr_lines * (-paint.ascent() + paint.descent())*1.1;
+            }
+            int valve_y = p.y+ height - 2*padding;
+            c.drawText("Open:" + v.turnsToOpen, p.x + padding, valve_y, paint);
+            c.drawText("Close:" + v.turnsToClosed, p.x + 6*padding, valve_y, paint);
+            c.drawText("T.:" + v.temperature, p.x + 12*padding, valve_y, paint);
+
+            int end_y = p.y+ height - padding;
+            if(v.workPermission) {
+                paint.setColor(Color.rgb(153,186,152));
+                c.drawText(v.workPermissionInfo, p.x + padding, end_y, paint);
+            }
+            else {
+                paint.setColor(Color.rgb(232,74,95));
+                c.drawText("No work permissions", p.x + padding, end_y, paint);
             }
         }
 
