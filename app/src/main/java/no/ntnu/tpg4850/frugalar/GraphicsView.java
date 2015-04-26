@@ -70,7 +70,7 @@ public class GraphicsView extends View {
         int padding = 20;
 
         paint.setTextSize(30f);
-        paint.setColor(Color.rgb(254,206,168));
+        paint.setColor(Color.rgb(64,64,64));
         c.drawText(q.id + "", p.x, p.y, paint);
         if(!q.networkFailed) {
             c.drawText("Retrieving data", p.x, p.y + 2*padding, paint);
